@@ -378,7 +378,6 @@
 <div id="page-survey" class="page">
   <div class="container">
     <div class="survey-wrap">
-      <span class="back-link" id="survey-back-link" onclick="surveyBack()">← Zurück</span>
       <h2>Umfrage zur Produktbewertung</h2>
       <p class="survey-subtitle">Bitte beantworten Sie alle Pflichtfragen vollständig und ehrlich. Ihre Antworten sind anonym und werden ausschließlich für wissenschaftliche Zwecke verwendet.</p>
       <div class="survey-progress"><div class="survey-progress-bar" id="survey-progress-bar" style="width:0%"></div></div>
@@ -720,11 +719,6 @@ function buildSurvey(){
   });
   window._reqTotal = document.querySelectorAll('.q-block[data-req="1"]').length;
   updateProg();
-}
-
-function surveyBack(){
-  if(currentScenario===2) showPage('certainty');
-  else showPage('detail');
 }
 
 function updateProg(){
