@@ -55,6 +55,7 @@ td.n,th.n{text-align:right}.pos{font-weight:750;width:36px}
 .tile{padding:20px}.tile b{display:block;font-size:30px;letter-spacing:-.8px}
 .post{padding:16px 0;border-top:1px solid var(--ln);white-space:pre-wrap}
 .post:first-of-type{border-top:0}
+.poll-option{padding:12px 0;border-top:1px solid var(--ln)}.poll-option:first-child{border-top:0}.poll-track{height:8px;border-radius:99px;background:var(--ln);overflow:hidden;margin-top:7px}.poll-fill{height:100%;border-radius:99px;background:var(--grad)}.poll-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .txt{white-space:pre-wrap;line-height:1.7}
 .empty{color:var(--mu);padding:8px 0}
 .sw{position:relative;width:52px;height:32px;display:inline-block;flex:none}
@@ -89,14 +90,14 @@ h1{font-size:26px}.big{font-size:38px}}
 const K="f1liga25b",$=i=>document.getElementById(i),uid=()=>Math.random().toString(36).slice(2,8);
 const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const PTS=[25,18,15,12,10,8,6,4,2,1],CATS=["Announcement","Event text","Race review","Message"];
-const NAV=[["General",[["feed","Feed"]]],["Season",[["calendar","Race Calendar"],["standings","Championship"]]],["Official",[["rules","Rulebook"],["results","Race Results"],["penalties","Penalty Points"]]],["Statistics",[["s-drivers","Drivers All-Time"],["s-teams","Teams All-Time"],["s-tracks","Tracks All-Time"],["s-all","All-Time Overview"]]]];
+const NAV=[["General",[["feed","Feed"]]],["Season",[["calendar","Race Calendar"],["voting","Time Voting"],["standings","Championship"]]],["Official",[["rules","Rulebook"],["results","Race Results"],["penalties","Penalty Points"]]],["Statistics",[["s-drivers","Drivers All-Time"],["s-teams","Teams All-Time"],["s-tracks","Tracks All-Time"],["s-all","All-Time Overview"]]]];
 const TITLES={};NAV.forEach(g=>g[1].forEach(p=>TITLES[p[0]]=p[1]));
 function seed(){return{active:"l1",leagues:[{id:"l1",name:"Season 1",done:false,
 races:[{id:"a1",track:"Bahrain",date:"2026-11-21",time:"20:00",note:"Full race, 50%"},{id:"a2",track:"Suzuka",date:"2026-11-28",time:"20:00",note:"Full race, 50%"},{id:"a3",track:"Monza",date:"2026-12-05",time:"20:00",note:"Sprint format"}],
 drivers:[{name:"Max",team:"Red Bull"},{name:"Lena",team:"Ferrari"},{name:"Tom",team:"Mercedes"},{name:"Jonas",team:"McLaren"},{name:"Sara",team:"Alfa Romeo"}],results:[],pen:[]}],
 posts:[{id:"n1",c:"Announcement",t:"Welcome to the new season. Check the calendar and the rules before the first race.",d:Date.now()}],
 txt:{rules:"1. Races start at the announced time. Be in the lobby 15 minutes early.\n2. Points: 25-18-15-12-10-8-6-4-2-1.\n3. Assists and difficulty are set by the host.\n4. Disconnects: rejoin if possible, no restart.",conduct:"Race clean. Leave space, brake in time and give back positions after cutting a corner.\nNo deliberate collisions. Respect blue flags.",director:"The race director reviews incidents within 48 hours. Evidence: clip with timestamp.\nPenalties: time penalty, grid drop or penalty points."}}}
-const API_URL = "https://script.google.com/macros/s/AKfycbxF3tiWbwUQlccwL0bv2gEunW09102HDocXPE8djL7SMVh1lfe0djZNborj-Am6vuQ/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxHqVi_OIQWRMz-ir5WLjIQ7gtuau_nvO5MgjLnPMe8lM8kC4WlbiGqThA2O5PDmc8/exec";
 let DB;
 let saveQueue = Promise.resolve();
 
@@ -112,6 +113,8 @@ const S = {
   set results(v){L().results=v},
   get pen(){return L().pen},
   set pen(v){L().pen=v},
+  get polls(){return L().polls},
+  set polls(v){L().polls=v},
   get posts(){return DB.posts},
   set posts(v){DB.posts=v},
   get txt(){return DB.txt}
@@ -168,6 +171,7 @@ async function init() {
     return;
   }
 
+  DB.leagues.forEach(l=>{if(!Array.isArray(l.polls))l.polls=[];});
   render();
 }
 let editing=false,fc="";
@@ -189,6 +193,22 @@ const nx=rs.find(r=>!done(r.id)&&new Date(r.date+"T"+(r.time||"23:59"))>Date.now
 if(nx){const dd=Math.max(0,Math.ceil((new Date(nx.date+"T"+(nx.time||"00:00"))-Date.now())/864e5));h+=`<div class="g hero"><div><div class="mu">Next race</div><h2 style="margin:2px 0;font-size:28px;letter-spacing:-.6px">${esc(nx.track)}</h2><div class="mu">${fmt(nx.date,{weekday:"long",day:"numeric",month:"long"})} at ${esc(nx.time)}</div></div><div><div class="big">${dd}</div><div class="mu">${dd==1?"day":"days"} to go</div></div></div>`}
 return h+`<div class="g card"><h3>${esc(L().name)} schedule</h3>${rs.map(r=>`<div class="race"><div class="dt"><b>${fmt(r.date,{day:"numeric"})}</b><span>${fmt(r.date,{month:"short"})}</span></div><div class="grow"><b>${esc(r.track)}</b><div class="mu">${esc(r.time)}${r.note?" - "+esc(r.note):""}</div></div><span class="tag ${done(r.id)?"ok":nx&&nx.id==r.id?"nx":""}">${done(r.id)?"Completed":nx&&nx.id==r.id?"Next":"Upcoming"}</span><button class="x" onclick="del('races','${r.id}')">Remove</button></div>`).join("")||'<div class="empty">No races planned yet.</div>'}</div>
 <div class="g card"><h3>Add race</h3><div class="row"><input id="rt" placeholder="Track"><input id="rd" type="date"><input id="rh" type="time" value="20:00"><input id="rn" placeholder="Note (format, laps)" style="flex:1"><button class="p" onclick="addRace()">Add</button></div></div>`};
+pg.voting=()=>{
+  if(!Array.isArray(S.polls))S.polls=[];
+  const members=S.drivers||[];
+  const polls=[...S.polls].reverse();
+  const create=`<div class="g card"><h3>Create a time-slot poll</h3><p class="mu">Add one possible race date and time per line. Members can choose one option and change their vote later.</p><input id="polltitle" placeholder="Question, e.g. When should we race Suzuka?" style="width:100%;margin-bottom:10px"><textarea id="polloptions" placeholder="Saturday, 21 November - 19:00\nSaturday, 21 November - 20:00\nSunday, 22 November - 19:00" style="min-height:120px"></textarea><div style="margin-top:12px"><button class="p" onclick="createPoll()">Create poll</button></div></div>`;
+  const cards=polls.map(p=>{
+    const votes=Array.isArray(p.votes)?p.votes:[],options=Array.isArray(p.options)?p.options:[];
+    const total=votes.length;
+    const results=options.map(o=>{const count=votes.filter(v=>v.optionId===o.id).length;const pct=total?Math.round(count/total*100):0;return `<div class="poll-option"><div class="row" style="justify-content:space-between"><b>${esc(o.label)}</b><span class="mu">${count} vote${count===1?"":"s"} · ${pct}%</span></div><div class="poll-track"><div class="poll-fill" style="width:${pct}%"></div></div></div>`}).join("");
+    const memberOptions=members.map(d=>`<option value="${esc(d.name)}">${esc(d.name)}</option>`).join("");
+    const selected=members.length?`<div class="row" style="margin-top:14px"><select id="pollvoter-${p.id}" aria-label="Your driver name"><option value="">Select your name</option>${memberOptions}</select><select id="pollchoice-${p.id}" aria-label="Preferred time slot"><option value="">Choose a time slot</option>${options.map(o=>`<option value="${esc(o.id)}">${esc(o.label)}</option>`).join("")}</select><button class="p" onclick="castVote('${p.id}')">${votes.some(v=>members.some(d=>d.name===v.driver))?"Submit / update vote":"Vote"}</button></div>`:`<p class="mu">Add league members in Championship before voting.</p>`;
+    const status=p.closed?'<span class="tag">Closed</span>':'<span class="tag ok">Open</span>';
+    return `<div class="g card"><div class="row" style="justify-content:space-between"><div><h3 style="margin:0 0 5px">${esc(p.title)}</h3><div class="mu">${total} vote${total===1?"":"s"} · ${members.length} league member${members.length===1?"":"s"}</div></div>${status}</div><div style="margin-top:14px">${results}</div>${p.closed?'<p class="mu" style="margin-top:12px">Voting is closed.</p>':members.length?selected:'<p class="mu">Add league members in Championship before voting.</p>'}<div class="poll-actions" style="margin-top:14px"><button onclick="togglePoll('${p.id}')">${p.closed?"Reopen poll":"Close poll"}</button><button class="x" onclick="deletePoll('${p.id}')">Delete</button></div></div>`;
+  }).join("");
+  return create+(cards||'<div class="g card empty">No polls yet. Create one above to let everyone choose a race time.</div>');
+};
 pg.standings=()=>{const l=L(),s=stats([l]);return`<div class="g card"><div class="row" style="justify-content:space-between"><div><h3 style="margin:0">${esc(l.name)}</h3><div class="mu">${l.done?"Season finished. The champion is part of the Hall of Fame.":"Season in progress."}</div></div><div class="row"><span class="mu">Season finished</span><label class="sw"><input type="checkbox" ${l.done?"checked":""} onchange="L().done=this.checked;save();render()"><i></i></label></div></div></div>
 <div class="g card"><h3>Drivers</h3>${table(["#","Driver","Team",{t:"Wins",n:1},{t:"Podiums",n:1},{t:"Points",n:1}],s.d.map((d,i)=>`<tr><td class="pos">${i+1}</td><td><b>${esc(d.name)}</b>${l.done&&i==0&&d.pts?' <span class="tag ok">Champion</span>':""}</td><td class="mu">${esc(d.team)}</td><td class="n">${d.w}</td><td class="n">${d.p}</td><td class="n"><b>${d.pts}</b></td></tr>`))}</div>
 <div class="g card"><h3>Teams</h3>${table(["#","Team",{t:"Wins",n:1},{t:"Points",n:1}],s.t.map((d,i)=>`<tr><td class="pos">${i+1}</td><td><b>${esc(d.name)}</b></td><td class="n">${d.w}</td><td class="n"><b>${d.pts}</b></td></tr>`))}</div>
@@ -220,13 +240,17 @@ addEventListener("click",()=>document.querySelectorAll(".dd.open").forEach(d=>d.
 function del(k,id){S[k]=S[k].filter(x=>x.id!=id);if(k=="races")S.results=S.results.filter(r=>r.raceId!=id);save();render()}
 function addRace(){const t=$("rt").value.trim(),d=$("rd").value;if(!t||!d)return;S.races.push({id:uid(),track:t,date:d,time:$("rh").value,note:$("rn").value.trim()});save();render()}
 function addDriver(){const n=$("dn").value.trim();if(!n)return;S.drivers.push({name:n,team:$("dt").value.trim()||"Independent"});save();render()}
-function addLeague(){const n=$("ln").value.trim();if(!n)return;const id=uid();DB.leagues.push({id,name:n,done:false,races:[],results:[],pen:[],drivers:$("lk").checked?JSON.parse(JSON.stringify(L().drivers)):[]});DB.active=id;save();render()}
+function addLeague(){const n=$("ln").value.trim();if(!n)return;const id=uid();DB.leagues.push({id,name:n,done:false,races:[],results:[],pen:[],polls:[],drivers:$("lk").checked?JSON.parse(JSON.stringify(L().drivers)):[]});DB.active=id;save();render()}
 function addResult(){const o=$("ro").value.split("\n").map(x=>x.trim()).filter(Boolean);if(!o.length||!DDV.rr)return;S.results=S.results.filter(r=>r.raceId!=DDV.rr);S.results.push({id:uid(),raceId:DDV.rr,order:o});save();render()}
 function addPen(){if(!DDV.pd)return;S.pen.push({id:uid(),driver:DDV.pd,pts:+$("pp").value||1,reason:$("pr").value.trim()});save();render()}
 function addPost(){const t=$("fp").value.trim();if(!t)return;S.posts.push({id:uid(),c:DDV.fk,t,d:Date.now()});save();render()}
+function createPoll(){const title=$("polltitle").value.trim(),lines=$("polloptions").value.split("\n").map(x=>x.trim()).filter(Boolean);if(!title||lines.length<2){alert("Add a question and at least two time slots.");return}S.polls.push({id:uid(),title,options:lines.map(label=>({id:uid(),label})),votes:[],closed:false,created:Date.now()});save();render()}
+function castVote(id){const poll=S.polls.find(p=>p.id===id);if(!poll||poll.closed)return;const driver=$("pollvoter-"+id).value,optionId=$("pollchoice-"+id).value;if(!driver||!optionId){alert("Select your name and a time slot first.");return}const existing=poll.votes.find(v=>v.driver===driver);if(existing)existing.optionId=optionId;else poll.votes.push({driver,optionId});save();render()}
+function togglePoll(id){const poll=S.polls.find(p=>p.id===id);if(!poll)return;poll.closed=!poll.closed;save();render()}
+function deletePoll(id){if(!confirm("Delete this poll and all its votes?"))return;S.polls=S.polls.filter(p=>p.id!==id);save();render()}
 function render(){const c=pg[cur()]?cur():"calendar";
 $("nav").innerHTML=`<div class="brand"><div class="logo"></div>F1 25 League</div>${(DDV.lg=L().id,dd("lg",DB.leagues.map(l=>[l.id,l.name]),null,v=>{DB.active=v;save();render()}))}`+NAV.map(g=>`<div class="grp">${g[0]}</div>`+g[1].map(p=>`<a href="#${p[0]}" class="${p[0]==c?"on":""}">${p[1]}</a>`).join("")).join("");
-const subs={calendar:"Plan race nights and see what is next.",standings:"Standings, members and seasons of your league.",results:"Enter finishing orders. Points are calculated automatically.",penalties:"Track penalty points per driver.",rules:"Rules, driving conduct and the race director guide in one place.",feed:"Announcements, event texts, race reviews and messages in one place."};
+const subs={calendar:"Plan race nights and see what is next.",voting:"Vote on the date and time that works best for your next race.",standings:"Standings, members and seasons of your league.",results:"Enter finishing orders. Points are calculated automatically.",penalties:"Track penalty points per driver.",rules:"Rules, driving conduct and the race director guide in one place.",feed:"Announcements, event texts, race reviews and messages in one place."};
 $("main").innerHTML=`<h1>${TITLES[c]}</h1><p class="sub">${subs[c]||"F1 25 league with friends."}</p>`+pg[c]();$("nav").classList.remove("open")}
 addEventListener("hashchange",()=>{
   editing=false;
