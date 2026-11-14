@@ -81,11 +81,38 @@ nav{position:fixed;z-index:20;left:12px;top:calc(12px + env(safe-area-inset-top,
 nav.open{transform:none}
 #menu{display:block;position:fixed;z-index:30;left:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));background:var(--glass);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px)}
 h1{font-size:26px}.big{font-size:38px}}
+
+/* Refined controls and native-dialog replacements */
+input,select,textarea{transition:border-color .18s,box-shadow .18s,background .18s;border-color:var(--bd);background:var(--gl2)}
+input:hover,select:hover,textarea:hover{border-color:rgba(30,144,255,.38)}
+input:focus,select:focus,textarea:focus{border-color:rgba(30,144,255,.65);box-shadow:0 0 0 4px rgba(30,144,255,.13),inset 0 1px 2px var(--ln)}
+input::placeholder,textarea::placeholder{color:var(--mu);opacity:.72}
+input[type=date],input[type=time],input[type=number],input[type=password],input[type=text]{min-height:42px}
+input[type=date],input[type=time]{font-variant-numeric:tabular-nums;cursor:pointer}
+input[type=date]::-webkit-calendar-picker-indicator,input[type=time]::-webkit-calendar-picker-indicator{cursor:pointer;opacity:.72;filter:var(--picker-filter,none)}
+input[type=checkbox],input[type=radio]{accent-color:#6680f5}
+select{cursor:pointer}
+textarea{border-radius:20px;line-height:1.6}
+button:focus-visible{outline:3px solid rgba(30,144,255,.35);outline-offset:2px}
+button:disabled{opacity:.45;cursor:not-allowed;transform:none}
+#toast-stack{position:fixed;z-index:200;right:18px;top:18px;display:grid;gap:10px;width:min(380px,calc(100vw - 36px));pointer-events:none}
+.toast{pointer-events:auto;display:flex;align-items:flex-start;gap:11px;padding:14px 16px;border:1px solid var(--bd);border-radius:20px;background:var(--gl2);-webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%);box-shadow:0 14px 36px var(--sh);animation:toast-in .22s ease both}
+.toast-mark{width:9px;height:9px;border-radius:50%;margin-top:7px;background:var(--gr);flex:none}.toast.error .toast-mark{background:#ef5350}.toast-text{font-size:14px;line-height:1.45;overflow-wrap:anywhere}
+@keyframes toast-in{from{opacity:0;transform:translateY(-8px) scale(.98)}to{opacity:1;transform:none}}
+#app-dialog{position:fixed;inset:0;z-index:300;display:none;place-items:center;padding:20px;background:rgba(10,14,25,.28);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+#app-dialog.open{display:grid}.dialog-card{width:min(430px,100%);padding:24px;border-radius:28px;background:var(--bg);border:1px solid var(--bd);box-shadow:0 24px 70px rgba(0,0,0,.24),inset 0 1px 0 var(--hi);animation:dialog-in .18s ease both}
+.dialog-card h3{font-size:19px;margin:0 0 7px}.dialog-card p{color:var(--mu);margin:0 0 17px;white-space:pre-wrap}.dialog-card input{width:100%;border-radius:15px;margin-bottom:16px}
+.dialog-actions{display:flex;justify-content:flex-end;gap:9px;flex-wrap:wrap}
+@keyframes dialog-in{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
+@media(max-width:600px){#toast-stack{right:12px;top:12px;width:calc(100vw - 24px)}.dialog-card{padding:20px;border-radius:24px}}
+
 </style>
 </head>
 <body>
 <div class="app"><nav class="g" id="nav"></nav><main id="main"></main></div>
 <button id="menu" onclick="document.getElementById('nav').classList.toggle('open')">Menu</button>
+<div id="toast-stack" aria-live="polite" aria-atomic="false"></div>
+<div id="app-dialog" role="presentation" onclick="if(event.target===this)closeDialog(false)"><div class="dialog-card" role="dialog" aria-modal="true" aria-labelledby="dialog-title"><h3 id="dialog-title"></h3><p id="dialog-message"></p><input id="dialog-input" style="display:none" autocomplete="off"><div class="dialog-actions"><button type="button" onclick="closeDialog(false)">Cancel</button><button type="button" class="p" id="dialog-accept" onclick="closeDialog(true)">Continue</button></div></div></div>
 <script>
 const K="f1liga25b",$=i=>document.getElementById(i),uid=()=>Math.random().toString(36).slice(2,8);
 const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -97,7 +124,7 @@ races:[{id:"a1",track:"Bahrain",date:"2026-11-21",time:"20:00",note:"Full race, 
 drivers:[{name:"Max",team:"Red Bull"},{name:"Lena",team:"Ferrari"},{name:"Tom",team:"Mercedes"},{name:"Jonas",team:"McLaren"},{name:"Sara",team:"Alfa Romeo"}],results:[],pen:[],polls:[]}],
 posts:[{id:"n1",c:"Announcement",t:"Welcome to the new season. Check the calendar and the rules before the first race.",d:Date.now()}],
 txt:{rules:"1. Races start at the announced time. Be in the lobby 15 minutes early.\n2. Points: 25-18-15-12-10-8-6-4-2-1.\n3. Assists and difficulty are set by the host.\n4. Disconnects: rejoin if possible, no restart.",conduct:"Race clean. Leave space, brake in time and give back positions after cutting a corner.\nNo deliberate collisions. Respect blue flags.",director:"The race director reviews incidents within 48 hours. Evidence: clip with timestamp.\nPenalties: time penalty, grid drop or penalty points."}}}
-const API_URL = "https://script.google.com/macros/s/AKfycbzPi0m9SBsGCvPpxBoybzSomlt_x8L08x5mjvMiF8XS4ZQya6roKVdeTUtMoN8fQEA/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyD2U4M5FVeeK6ZkkkkDJ6zz-ms86-0iz4_5K_WfTrEWdhEFgXepFNNdcO-3ms-nwI/exec";
 let DB;
 let AUTH=null;
 let saving=false,refreshBusy=false,lastServerSnapshot="",pendingRefreshData=null;
@@ -106,6 +133,25 @@ const AUTH_KEY="f1liga25_auth_v1";
 const isAdmin=()=>AUTH?.role==="admin";
 const isLoggedIn=()=>!!AUTH?.token;
 async function api(action,payload={}){const response=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action,token:AUTH?.token||"",...payload})});const result=await response.json();if(!response.ok||!result.success)throw new Error(result.error||"Request failed");return result;}
+
+function notify(message,type="success"){
+  const stack=$("toast-stack");if(!stack){console[type==="error"?"error":"log"](message);return;}
+  const item=document.createElement("div");item.className="toast "+type;
+  const mark=document.createElement("span");mark.className="toast-mark";
+  const text=document.createElement("div");text.className="toast-text";text.textContent=String(message);
+  item.append(mark,text);stack.append(item);setTimeout(()=>{item.style.opacity="0";item.style.transform="translateY(-6px)";setTimeout(()=>item.remove(),220)},3600);
+}
+let dialogResolve=null;
+function openDialog({title,message,value="",input=false,accept="Continue",password=false}){
+  return new Promise(resolve=>{dialogResolve=resolve;$("dialog-title").textContent=title;$("dialog-message").textContent=message;
+    const field=$("dialog-input");field.style.display=input?"block":"none";field.type=password?"password":"text";field.value=value;field.placeholder=password?"Enter password":"";
+    $("dialog-accept").textContent=accept;$("app-dialog").classList.add("open");
+    if(input){field.focus();field.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();closeDialog(true)}};}else $("dialog-accept").focus();
+  });
+}
+function closeDialog(ok){const root=$("app-dialog");if(!root.classList.contains("open"))return;root.classList.remove("open");const value=$("dialog-input").value;$("dialog-input").onkeydown=null;const done=dialogResolve;dialogResolve=null;if(done)done(ok?value:false);}
+const askConfirm=(message,title="Are you sure?")=>openDialog({title,message,accept:"Confirm"}).then(Boolean);
+const askInput=(message,title="Enter a value",password=true)=>openDialog({title,message,input:true,password,accept:"Save"}).then(v=>v===false?null:v);
 
 const L = () =>
   DB.leagues.find(l => l.id == DB.active) || DB.leagues[0];
@@ -128,7 +174,9 @@ const S = {
 
 function diffObjects(before, after, path=[], out=[]) {
   if (JSON.stringify(before) === JSON.stringify(after)) return out;
-  if (before && after && typeof before === "object" && typeof after === "object" && !Array.isArray(before) && !Array.isArray(after)) {
+  if (Array.isArray(before) && Array.isArray(after) && before.length === after.length) {
+    for (let i=0;i<after.length;i++) diffObjects(before[i],after[i],[...path,i],out);
+  } else if (before && after && typeof before === "object" && typeof after === "object" && !Array.isArray(before) && !Array.isArray(after)) {
     const keys = new Set([...Object.keys(before), ...Object.keys(after)]);
     for (const key of keys) {
       if (!(key in after)) out.push({path:[...path,key], remove:true});
@@ -155,16 +203,16 @@ function flushAdminSave() {
     waiters.forEach(w=>w.resolve(r));
   }).catch(e=>{
     waiters.forEach(w=>w.reject(e));
-    alert("Could not save: "+e.message);
+    notify("Save failed. Please try again.","error");
   }).finally(()=>{saving=false;applyPendingRefresh();});
 }
 const save = () => {
-  if(!isAdmin()){alert("Only an administrator can make this change.");return Promise.reject(new Error("Permission denied"));}
+  if(!isAdmin()){notify("Only an administrator can make this change.","error");return Promise.reject(new Error("Permission denied"));}
   try{localStorage.setItem(K,JSON.stringify(DB))}catch(e){}
   const promise=new Promise((resolve,reject)=>saveWaiters.push({resolve,reject}));
   saving=true;
   clearTimeout(saveTimer);
-  saveTimer=setTimeout(flushAdminSave,350);
+  saveTimer=setTimeout(flushAdminSave,100);
   return promise;
 };
 
@@ -308,12 +356,31 @@ const text=k=>()=>`<div class="g card">${isAdmin()&&editing?`<textarea id="te" s
 pg.rules=()=>[["rules","Rules"],["conduct","Driving Conduct"],["director","Race Director Guide"]].map(([k,t])=>`<div class="g card"><div class="row" style="justify-content:space-between;margin-bottom:8px"><h3 style="margin:0">${t}</h3>${isAdmin()&&editing==k?"":(isAdmin()?`<button onclick="editing='${k}';render()">Edit</button>`:"")}</div>${isAdmin()&&editing==k?`<textarea id="te" style="min-height:220px">${esc(S.txt[k])}</textarea><div class="row" style="margin-top:12px"><button class="p" onclick="S.txt['${k}']=$('te').value;editing='';save();render()">Save</button><button onclick="editing='';render()">Cancel</button></div>`:`<div class="txt">${esc(S.txt[k])}</div>`}</div>`).join("");
 
 pg.accounts=()=>`<div class="g card"><h3>Account management</h3><p class="mu">Create individual logins and assign roles. Accounts are stored securely by Google Apps Script.</p><div class="form-grid"><div class="field"><label>Username</label><input id="newuser" placeholder="e.g. Lena"></div><div class="field"><label>Temporary password</label><input id="newpass" type="password" placeholder="At least 10 characters"></div><div class="field"><label>Role</label>${dd("newrole",[["user","Regular user"],["admin","Admin"]],"user")}</div></div><button class="p" style="margin-top:14px" onclick="createAccount()">Create account</button></div><div class="g card"><h3>Registered accounts</h3><div id="account-list" class="empty">Loading accounts…</div></div><div class="g card"><h3>Season management</h3><p class="mu">Deleting a season permanently removes its races, votes, results and penalties.</p>${dd("deleteseason",DB.leagues.map(l=>[l.id,l.name]))}<button class="x" onclick="deleteSeason()">Delete selected season</button></div>`;
-async function changeMyPassword(){const password=prompt("Enter your new password (at least 10 characters):");if(!password)return;try{await api("changePassword",{password});alert("Your password has been changed.");}catch(e){alert(e.message);}}
+async function changeMyPassword(){const password=await askInput("Enter your new password (at least 10 characters):","Change password",true);if(!password)return;try{await api("changePassword",{password});notify("Your password has been changed.");}catch(e){notify(e.message,"error");}}
 async function refreshAccounts(){try{const r=await api("listUsers");$("account-list").innerHTML=r.users.map(u=>`<div class="race"><div class="grow"><b>${esc(u.username)}</b><div class="mu">${u.role==="admin"?"Administrator":"Regular user"}</div></div><button class="x" onclick="resetAccountPassword('${esc(u.username)}')">Reset password</button>${u.username!=="Albert"?`<button class="x" onclick="removeAccount('${esc(u.username)}')">Delete</button>`:""}</div>`).join("")||"No accounts.";}catch(e){$("account-list").textContent=e.message;}}
-async function createAccount(){try{await api("createUser",{username:$("newuser").value.trim(),password:$("newpass").value,role:DDV.newrole||"user"});alert("Account created.");render();refreshAccounts();}catch(e){alert(e.message);}}
-async function removeAccount(username){if(!confirm(`Delete account ${username}?`))return;try{await api("deleteUser",{username});refreshAccounts();}catch(e){alert(e.message);}}
-async function resetAccountPassword(username){const password=prompt(`New temporary password for ${username} (at least 10 characters):`);if(!password)return;try{await api("resetPassword",{username,password});alert("Password updated.");}catch(e){alert(e.message);}}
-async function deleteSeason(){const id=DDV.deleteseason;if(!id||DB.leagues.length<2){alert("Keep at least one season.");return;}if(!confirm("Permanently delete this season and all its data?"))return;try{await api("deleteSeason",{seasonId:id});DB.leagues=DB.leagues.filter(l=>l.id!==id);if(DB.active===id)DB.active=DB.leagues[0].id;render();}catch(e){alert(e.message);}}
+async function createAccount(){try{await api("createUser",{username:$("newuser").value.trim(),password:$("newpass").value,role:DDV.newrole||"user"});notify("Account created.");render();refreshAccounts();}catch(e){notify(e.message,"error");}}
+async function removeAccount(username){if(!await askConfirm(`Delete account ${username}?`,"Delete account"))return;try{await api("deleteUser",{username});refreshAccounts();}catch(e){notify(e.message,"error");}}
+async function resetAccountPassword(username){const password=await askInput(`New temporary password for ${username} (at least 10 characters):`,`Reset password · ${username}`,true);if(!password)return;try{await api("resetPassword",{username,password});notify("Password updated.");}catch(e){notify(e.message,"error");}}
+async function deleteSeason(){
+  const id=String(DDV.deleteseason||"");
+  const season=DB.leagues.find(l=>String(l.id)===id);
+  if(!season){notify("Select a season first.","error");return;}
+  if(DB.leagues.length<2){notify("At least one season must remain.","error");return;}
+  if(!await askConfirm(`Delete “${season.name}” and all its data?`,"Delete season"))return;
+  try{
+    const r=await api("deleteSeason",{seasonId:id});
+    if(!r.data||!Array.isArray(r.data.leagues)||r.data.leagues.some(l=>String(l.id)===id)){
+      throw new Error("The server did not confirm the deletion.");
+    }
+    DB=r.data;
+    normalizeDb();
+    lastServerSnapshot=JSON.stringify(DB);
+    try{localStorage.setItem(K,lastServerSnapshot)}catch(e){}
+    DDV.deleteseason=DB.leagues[0]?.id||"";
+    render();
+    notify("Season deleted.");
+  }catch(e){notify(e.message||"Could not delete season.","error");}
+}
 
 const AL=()=>DB.leagues;
 pg["s-drivers"]=()=>`<div class="g card">${table(["#","Driver",{t:"Leagues",n:1},{t:"Titles",n:1},{t:"Races",n:1},{t:"Wins",n:1},{t:"Podiums",n:1},{t:"Points",n:1}],stats(AL()).d.map((d,i)=>`<tr><td class="pos">${i+1}</td><td><b>${esc(d.name)}</b></td><td class="n">${AL().filter(l=>l.drivers.some(x=>x.name.toLowerCase()==d.name.toLowerCase())).length}</td><td class="n">${d.ti}</td><td class="n">${d.r}</td><td class="n">${d.w}</td><td class="n">${d.p}</td><td class="n"><b>${d.pts}</b></td></tr>`))}</div>`;
@@ -329,28 +396,28 @@ function ddt(e,id){e.stopPropagation();const el=$(id),o=el.classList.contains("o
 function dds(id,i){const o=DDO[id][i],el=$(id);DDV[id]=o[0];el.querySelector(".ddb").textContent=o[1];el.querySelectorAll(".ddm div").forEach((d,j)=>d.className=j==i?"sel":"");el.classList.remove("open");if(DDF[id])DDF[id](o[0])}
 addEventListener("click",()=>document.querySelectorAll(".dd.open").forEach(d=>d.classList.remove("open")));
 function del(k,id){S[k]=S[k].filter(x=>x.id!=id);if(k=="races")S.results=S.results.filter(r=>r.raceId!=id);save();render()}
-function addRace(){const t=$("rt").value.trim();if(!t){alert("Enter a track name first.");return}S.races.push({id:uid(),track:t,date:"",time:"",note:$("rn").value.trim(),status:"proposed"});save();render()}
+function addRace(){const t=$("rt").value.trim();if(!t){notify("Enter a track name first.");return}S.races.push({id:uid(),track:t,date:"",time:"",note:$("rn").value.trim(),status:"proposed"});save();render()}
 function addDriver(){const n=$("dn").value.trim();if(!n)return;S.drivers.push({name:n,team:$("dt").value.trim()||"Independent"});save();render()}
 function addLeague(){const n=$("ln").value.trim();if(!n)return;const id=uid();DB.leagues.push({id,name:n,done:false,races:[],results:[],pen:[],polls:[],drivers:$("lk").checked?JSON.parse(JSON.stringify(L().drivers)):[]});DB.active=id;save();render()}
 function setResultRace(id){resultRaceId=id;const old=S.results.find(r=>r.raceId===id);resultDraft=old?[...old.order]:[""];render()}
 function editResult(id){resultRaceId=id;const old=S.results.find(r=>r.raceId===id);resultDraft=old?[...old.order]:[""];render()}
 function addResultDriver(){resultDraft.push("");render()}
 function removeResultDriver(i){if(resultDraft.length<=1)return;resultDraft.splice(i,1);render()}
-function saveResult(){const order=resultDraft.map(x=>String(x||"").trim()).filter(Boolean);if(!resultRaceId||!order.length){alert("Choose a race and at least one finishing driver.");return}if(new Set(order).size!==order.length){alert("Each driver can only appear once in the finishing order.");return}S.results=S.results.filter(r=>r.raceId!==resultRaceId);S.results.push({id:uid(),raceId:resultRaceId,order});resultDraft=[];save();render()}
+function saveResult(){const order=resultDraft.map(x=>String(x||"").trim()).filter(Boolean);if(!resultRaceId||!order.length){notify("Choose a race and at least one finishing driver.");return}if(new Set(order).size!==order.length){notify("Each driver can only appear once in the finishing order.");return}S.results=S.results.filter(r=>r.raceId!==resultRaceId);S.results.push({id:uid(),raceId:resultRaceId,order});resultDraft=[];save();render()}
 function addPen(){if(!DDV.pd)return;S.pen.push({id:uid(),driver:DDV.pd,pts:+$("pp").value||1,reason:$("pr").value.trim()});save();render()}
-async function addPost(){const t=$("fp").value.trim(),category=DDV.fk;if(!t)return;if(category==="Announcement"&&!isAdmin()){alert("Only admins can publish announcements.");return;}try{if(isAdmin()){S.posts.push({id:uid(),c:category,t,d:Date.now()});await save();}else{const r=await api("post",{category,text:t});DB.posts=r.posts;}render();}catch(e){alert(e.message);}}
+async function addPost(){const t=$("fp").value.trim(),category=DDV.fk;if(!t)return;if(category==="Announcement"&&!isAdmin()){notify("Only admins can publish announcements.");return;}try{if(isAdmin()){S.posts.push({id:uid(),c:category,t,d:Date.now()});await save();}else{const r=await api("post",{category,text:t});DB.posts=r.posts;}render();}catch(e){notify(e.message,"error");}}
 function addPollSlot(){pollSlots.push({date:"",time:"20:00"});render()}
 function removePollSlot(i){if(pollSlots.length<=2)return;pollSlots.splice(i,1);render()}
-function createPoll(){const title=$("polltitle").value.trim(),raceId=DDV.pollrace||"";const slots=pollSlots.map((x,i)=>({date:$("poll-date-"+i)?.value||x.date,time:$("poll-time-"+i)?.value||x.time})).filter(x=>x.date&&x.time);if(!title||!raceId||slots.length<2){alert("Choose a proposed race, add a poll title and at least two complete date/time options.");return}const options=slots.map(x=>({id:uid(),date:x.date,time:x.time,label:new Date(x.date+"T"+x.time).toLocaleString("en-GB",{weekday:"short",day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"})}));S.polls.push({id:uid(),title,raceId,options,votes:[],closed:false,created:Date.now()});pollSlots=[{date:"",time:"20:00"},{date:"",time:"21:00"}];DDV.pollrace="";save();render()}
-async function castVote(id){const poll=S.polls.find(p=>p.id===id);if(!poll||poll.closed)return;const optionId=DDV["pollchoice-"+id];if(!optionId){alert("Select a time slot first.");return}try{const r=await api("vote",{pollId:id,optionId});const target=S.polls.find(p=>p.id===id);target.votes=r.votes;render();}catch(e){alert(e.message);}}
-function closePoll(id){const poll=S.polls.find(p=>p.id===id);if(!poll)return;const race=S.races.find(r=>r.id===poll.raceId);if(race){const optionId=DDV["pollwinner-"+id];const option=poll.options.find(o=>o.id===optionId);if(!option){alert("Choose the date and time to schedule.");return}if(!poll.votes.length){if(!confirm("Nobody has voted yet. Close and schedule the selected option anyway?"))return}race.date=option.date;race.time=option.time;race.status="confirmed";poll.scheduledOption=option.id;}poll.closed=true;save();render()}
+function createPoll(){const title=$("polltitle").value.trim(),raceId=DDV.pollrace||"";const slots=pollSlots.map((x,i)=>({date:$("poll-date-"+i)?.value||x.date,time:$("poll-time-"+i)?.value||x.time})).filter(x=>x.date&&x.time);if(!title||!raceId||slots.length<2){notify("Choose a proposed race, add a poll title and at least two complete date/time options.");return}const options=slots.map(x=>({id:uid(),date:x.date,time:x.time,label:new Date(x.date+"T"+x.time).toLocaleString("en-GB",{weekday:"short",day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"})}));S.polls.push({id:uid(),title,raceId,options,votes:[],closed:false,created:Date.now()});pollSlots=[{date:"",time:"20:00"},{date:"",time:"21:00"}];DDV.pollrace="";save();render()}
+async function castVote(id){const poll=S.polls.find(p=>p.id===id);if(!poll||poll.closed)return;const optionId=DDV["pollchoice-"+id];if(!optionId){notify("Select a time slot first.");return}try{const r=await api("vote",{pollId:id,optionId});const target=S.polls.find(p=>p.id===id);target.votes=r.votes;render();}catch(e){notify(e.message,"error");}}
+async function closePoll(id){const poll=S.polls.find(p=>p.id===id);if(!poll)return;const race=S.races.find(r=>r.id===poll.raceId);if(race){const optionId=DDV["pollwinner-"+id];const option=poll.options.find(o=>o.id===optionId);if(!option){notify("Choose the date and time to schedule.");return}if(!poll.votes.length){if(!await askConfirm("Nobody has voted yet. Close and schedule the selected option anyway?","No votes yet"))return}race.date=option.date;race.time=option.time;race.status="confirmed";poll.scheduledOption=option.id;}poll.closed=true;save();render()}
 function reopenPoll(id){const poll=S.polls.find(p=>p.id===id);if(!poll)return;poll.closed=false;const race=S.races.find(r=>r.id===poll.raceId);if(race&&poll.scheduledOption){race.status="proposed";race.date="";race.time="";delete poll.scheduledOption}save();render()}
-function deletePoll(id){if(!confirm("Delete this poll and all its votes?"))return;S.polls=S.polls.filter(p=>p.id!==id);save();render()}
+async function deletePoll(id){if(!await askConfirm("Delete this poll and all its votes?","Delete poll"))return;S.polls=S.polls.filter(p=>p.id!==id);save();render()}
 function render(){if(!isLoggedIn()){renderLogin();return;}const c=pg[cur()]?cur():"calendar";if(c==="accounts"&&!isAdmin()){location.hash="#calendar";return;}
 $("nav").innerHTML=`<div class="brand"><div class="logo"></div>F1 25 League</div><div class="mu" style="padding:0 12px 10px">${esc(AUTH.username)} · ${isAdmin()?"Admin":"Member"}</div>${(DDV.lg=L().id,dd("lg",DB.leagues.map(l=>[l.id,l.name]),null,v=>switchSeason(v)))}`+NAV.map(g=>{if(g[0]==="Administration"&&!isAdmin())return"";return `<div class="grp">${g[0]}</div>`+g[1].map(p=>`<a href="#${p[0]}" class="${p[0]==c?"on":""}">${p[1]}</a>`).join("")}).join("")+`<button style="margin:14px 10px" onclick="changeMyPassword()">Change password</button><button style="margin:0 10px 14px" onclick="logout()">Log out</button>`;
 const subs={calendar:"Plan race nights and see what is next.",voting:"Vote on the date and time that works best for your next race.",standings:"Standings, members and seasons of your league.",results:"Race finishing orders and points.",penalties:"Track penalty points per driver.",rules:"Rules, driving conduct and the race director guide in one place.",feed:"Announcements, event texts, race reviews and messages in one place.",accounts:"Manage league accounts, roles and seasons."};
 $("main").innerHTML=`<h1>${TITLES[c]||"Account Management"}</h1><p class="sub">${subs[c]||"F1 25 league administration."}</p>`+pg[c]();$("nav").classList.remove("open");if(c==="accounts")refreshAccounts();}
-async function switchSeason(id){try{await api("switchSeason",{seasonId:id});DB.active=id;render();}catch(e){alert(e.message);}}
+async function switchSeason(id){try{await api("switchSeason",{seasonId:id});DB.active=id;render();}catch(e){notify(e.message,"error");}}
 
 addEventListener("hashchange",()=>{
   editing=false;
