@@ -149,7 +149,7 @@ function openDialog({title,message,value="",input=false,accept="Continue",passwo
     if(input){field.focus();field.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();closeDialog(true)}};}else $("dialog-accept").focus();
   });
 }
-function closeDialog(ok){const root=$("app-dialog");if(!root.classList.contains("open"))return;root.classList.remove("open");const value=$("dialog-input").value;$("dialog-input").onkeydown=null;const done=dialogResolve;dialogResolve=null;if(done)done(ok?value:false);}
+function closeDialog(ok){const root=$("app-dialog");if(!root.classList.contains("open"))return;root.classList.remove("open");const field=$("dialog-input"),value=field.value,isInput=field.style.display!=="none";field.onkeydown=null;const done=dialogResolve;dialogResolve=null;if(done)done(ok?(isInput?value:true):false);}
 const askConfirm=(message,title="Are you sure?")=>openDialog({title,message,accept:"Confirm"}).then(Boolean);
 const askInput=(message,title="Enter a value",password=true)=>openDialog({title,message,input:true,password,accept:"Save"}).then(v=>v===false?null:v);
 
@@ -266,7 +266,7 @@ function startAutoRefresh(){
         AUTH=null;try{localStorage.removeItem(AUTH_KEY)}catch(_){};renderLogin();
       }else console.warn("Background refresh failed:",e);
     }finally{refreshBusy=false;}
-  },5000);
+  },1000);
 }
 addEventListener("focusout",()=>window.setTimeout(applyPendingRefresh,0));
 addEventListener("click",()=>window.setTimeout(applyPendingRefresh,0));
@@ -395,7 +395,7 @@ return`<div class="dd" id="${id}"><button type="button" class="ddb" onclick="ddt
 function ddt(e,id){e.stopPropagation();const el=$(id),o=el.classList.contains("open");document.querySelectorAll(".dd.open").forEach(d=>d.classList.remove("open"));if(!o)el.classList.add("open")}
 function dds(id,i){const o=DDO[id][i],el=$(id);DDV[id]=o[0];el.querySelector(".ddb").textContent=o[1];el.querySelectorAll(".ddm div").forEach((d,j)=>d.className=j==i?"sel":"");el.classList.remove("open");if(DDF[id])DDF[id](o[0])}
 addEventListener("click",()=>document.querySelectorAll(".dd.open").forEach(d=>d.classList.remove("open")));
-function del(k,id){S[k]=S[k].filter(x=>x.id!=id);if(k=="races")S.results=S.results.filter(r=>r.raceId!=id);save();render()}
+async function del(k,id){const labels={races:"race",results:"race result",pen:"penalty entry",posts:"Feed post"};const label=labels[k]||"item";if(!await askConfirm(`Delete this ${label}? This cannot be undone.`,"Confirm deletion"))return;S[k]=S[k].filter(x=>x.id!=id);if(k==="races")S.results=S.results.filter(r=>r.raceId!=id);try{await save();render();notify(`${label[0].toUpperCase()+label.slice(1)} deleted.`)}catch(e){notify(e.message||"Could not delete item.","error")}}
 function addRace(){const t=$("rt").value.trim();if(!t){notify("Enter a track name first.");return}S.races.push({id:uid(),track:t,date:"",time:"",note:$("rn").value.trim(),status:"proposed"});save();render()}
 function addDriver(){const n=$("dn").value.trim();if(!n)return;S.drivers.push({name:n,team:$("dt").value.trim()||"Independent"});save();render()}
 function addLeague(){const n=$("ln").value.trim();if(!n)return;const id=uid();DB.leagues.push({id,name:n,done:false,races:[],results:[],pen:[],polls:[],drivers:$("lk").checked?JSON.parse(JSON.stringify(L().drivers)):[]});DB.active=id;save();render()}
