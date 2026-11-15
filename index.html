@@ -9,12 +9,12 @@
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d0e13;--tx:#f3f5fa;--mu:#9aa1b5;--glass:rgba(44,48,64,.5);--gl2:rgba(78,84,108,.55);--bd:rgba(255,255,255,.14);--hi:rgba(255,255,255,.24);--sh:rgba(0,0,0,.5);--ln:rgba(255,255,255,.1);color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#0d0e13;--tx:#f3f5fa;--mu:#9aa1b5;--glass:rgba(44,48,64,.5);--gl2:rgba(78,84,108,.55);--bd:rgba(255,255,255,.14);--hi:rgba(255,255,255,.24);--sh:rgba(0,0,0,.5);--ln:rgba(255,255,255,.1);color-scheme:dark}
 *{box-sizing:border-box}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px);scrollbar-gutter:stable;overflow-anchor:none}
 body{margin:0;min-height:100vh;color:var(--tx);font:15px/1.5 -apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Inter,Roboto,sans-serif;background:var(--bg);overflow-x:hidden;-webkit-font-smoothing:antialiased}
 body::before{content:"";position:fixed;inset:0;z-index:-1;background:radial-gradient(38vw 30vw at 8% 12%,var(--gr) 0,transparent 70%),radial-gradient(42vw 34vw at 95% 22%,var(--bl) 0,transparent 70%),radial-gradient(40vw 34vw at 78% 100%,var(--mg) 0,transparent 70%);opacity:.2;filter:blur(50px)}
 .app{display:grid;grid-template-columns:272px minmax(0,1fr);gap:18px;padding:18px;max-width:1280px;margin:0 auto}
 .g{background:var(--glass);-webkit-backdrop-filter:blur(28px) saturate(180%);backdrop-filter:blur(28px) saturate(180%);border:1px solid var(--bd);box-shadow:inset 0 1px 0 var(--hi),inset 0 -1px 0 var(--ln),0 1px 2px var(--sh),0 18px 40px var(--sh);border-radius:30px}
-nav{position:sticky;top:18px;align-self:start;max-height:calc(100vh - 36px);overflow:auto;padding:18px 14px}
+nav{position:sticky;top:18px;align-self:start;max-height:calc(100vh - 36px);overflow-y:auto;overflow-x:hidden;padding:18px 14px 18px 14px;border-radius:30px;scrollbar-width:none;overflow-anchor:none}
 .brand{display:flex;align-items:center;gap:10px;padding:2px 10px 14px;font-weight:700;font-size:17px;letter-spacing:-.2px}
 .logo{width:30px;height:30px;border-radius:50%;background:var(--grad);box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 4px 12px var(--sh)}
 .grp{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.9px;color:var(--mu);margin:18px 12px 6px}
@@ -58,6 +58,7 @@ td.n,th.n{text-align:right}.pos{font-weight:750;width:36px}
 .field{display:flex;flex-direction:column;gap:6px;min-width:0;flex:1}.field label{font-size:12px;font-weight:650;color:var(--mu)}.field input,.field select{width:100%;border-radius:16px}.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}.slot-row,.result-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;gap:10px;align-items:end;padding:12px 0;border-top:1px solid var(--ln)}.result-row{grid-template-columns:54px minmax(0,1fr) auto}.step{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--gl2);font-weight:750}.helper{font-size:12px;color:var(--mu);margin-top:5px}.poll-option{padding:12px 0;border-top:1px solid var(--ln)}.poll-option:first-child{border-top:0}.poll-track{height:8px;border-radius:99px;background:var(--ln);overflow:hidden;margin-top:7px}.poll-fill{height:100%;border-radius:99px;background:var(--grad)}.poll-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .txt{white-space:pre-wrap;line-height:1.7}
 .empty{color:var(--mu);padding:8px 0}
+.empty-state{display:block!important;width:100%;min-height:56px;padding:18px 22px!important;margin:0 0 16px;border-radius:24px;background:var(--glass);border:1px solid var(--bd);box-shadow:inset 0 1px 0 var(--hi),inset 0 -1px 0 var(--ln),0 8px 22px var(--sh);color:var(--mu);line-height:1.5;white-space:normal;overflow-wrap:anywhere}
 .sw{position:relative;width:52px;height:32px;display:inline-block;flex:none}
 .sw input{opacity:0;position:absolute;inset:0;margin:0;width:100%;height:100%;cursor:pointer;z-index:1}
 .sw i{position:absolute;inset:0;border-radius:99px;background:var(--gl2);box-shadow:inset 0 1px 3px var(--sh),inset 0 0 0 1px var(--bd);transition:.2s}
@@ -74,7 +75,8 @@ td.n,th.n{text-align:right}.pos{font-weight:750;width:36px}
 .ddm div.sel{font-weight:650}
 .ddm div.sel::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--gr);margin-right:8px}
 .g:has(.dd.open){position:relative;z-index:50}
-nav .dd{display:block;width:100%}nav .ddb{width:100%}nav .ddm{position:static;margin-top:6px}
+nav .dd{display:block;width:100%}nav .ddb{width:100%}nav .ddm{position:absolute;top:calc(100% + 6px);left:0;right:0;width:100%;max-height:240px;margin:0;z-index:100;overflow-y:auto}
+.ddm.portal-open{display:block;position:fixed!important;z-index:9999!important;margin:0!important;max-height:min(240px,45vh)!important;min-width:0!important}
 #menu{display:none}
 @media(max-width:820px){.app{grid-template-columns:1fr;padding:12px}
 nav{position:fixed;z-index:20;left:12px;top:calc(12px + env(safe-area-inset-top,0px));bottom:calc(76px + env(safe-area-inset-bottom,0px));width:min(300px,calc(100vw - 24px));max-height:none;transform:translateX(-120%);transition:.25s}
@@ -106,12 +108,37 @@ button:disabled{opacity:.45;cursor:not-allowed;transform:none}
 @keyframes dialog-in{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
 @media(max-width:600px){#toast-stack{right:12px;top:12px;width:calc(100vw - 24px)}.dialog-card{padding:20px;border-radius:24px}}
 
+
+.liquid-spinner{width:52px;height:52px;border-radius:50%;border:4px solid rgba(130,150,190,.2);border-top-color:#25a8ff;border-right-color:#8174f5;border-bottom-color:#f0309e;box-shadow:0 0 22px rgba(90,120,255,.22),inset 0 0 12px rgba(255,255,255,.22);animation:liquid-spin .85s cubic-bezier(.55,.15,.35,.85) infinite}
+.liquid-spinner:after{content:"";display:block;width:12px;height:12px;margin:16px;border-radius:50%;background:linear-gradient(135deg,#fff,rgba(255,255,255,.18));box-shadow:0 0 12px rgba(255,255,255,.8)}
+@keyframes liquid-spin{to{transform:rotate(360deg)}}
+.post-submit{min-width:104px}
+button.is-loading{position:relative;pointer-events:none;opacity:.9;padding-right:38px!important}
+button.is-loading::after{content:"";position:absolute;right:13px;top:50%;width:15px;height:15px;margin-top:-8px;border-radius:50%;border:2px solid rgba(255,255,255,.35);border-top-color:currentColor;border-right-color:currentColor;animation:liquid-spin .75s linear infinite}
+button:not(.p).is-loading::after{border-color:rgba(100,120,150,.22);border-top-color:var(--bl);border-right-color:var(--mg)}
+nav::-webkit-scrollbar{display:none;width:0} .ddm::-webkit-scrollbar{width:6px}
+ddm::-webkit-scrollbar-track{background:rgba(120,135,155,.07);border-radius:99px;margin:12px 2px}
+ddm::-webkit-scrollbar-thumb{background:linear-gradient(180deg,rgba(30,144,255,.5),rgba(120,110,220,.44),rgba(240,48,158,.4));border:1px solid transparent;background-clip:padding-box;border-radius:99px}
+ddm::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,rgba(30,144,255,.75),rgba(120,110,220,.68),rgba(240,48,158,.6));background-clip:padding-box}
+#nav-scroll-track{position:absolute;z-index:25;right:5px;top:14px;bottom:14px;width:5px;border-radius:99px;background:rgba(120,135,155,.08);pointer-events:auto;opacity:.9}
+#nav-scroll-thumb{position:absolute;left:0;top:0;width:5px;height:42px;min-height:42px;border-radius:99px;background:linear-gradient(180deg,rgba(30,144,255,.62),rgba(120,110,220,.56),rgba(240,48,158,.52));box-shadow:0 1px 5px rgba(80,100,150,.18);cursor:pointer;touch-action:none}
+#nav-scroll-thumb:active{filter:saturate(1.35)}
+#lg.loading .ddb{color:transparent;pointer-events:none}
+#lg.loading .ddb::before{content:"";position:absolute;left:50%;top:50%;width:18px;height:18px;margin:0;border-radius:50%;border:2px solid rgba(130,150,190,.22);border-top-color:#25a8ff;border-right-color:#8174f5;border-bottom-color:#f0309e;box-shadow:0 0 10px rgba(90,120,255,.18);transform:translate(-50%,-50%);animation:season-spin .78s linear infinite}
+#lg.loading .ddb::after{opacity:0}
+@keyframes season-spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+#delete-busy{position:fixed;z-index:450;top:14px;right:14px;width:42px;height:42px;display:none;place-items:center;border-radius:50%;background:var(--glass);border:1px solid var(--bd);box-shadow:inset 0 1px 0 var(--hi),0 8px 24px var(--sh);-webkit-backdrop-filter:blur(22px) saturate(180%);backdrop-filter:blur(22px) saturate(180%);pointer-events:none}
+#delete-busy.show{display:grid}
+#delete-busy .liquid-spinner{width:23px;height:23px;border-width:2.5px;box-shadow:0 0 12px rgba(90,120,255,.2)}
+#delete-busy .liquid-spinner:after{width:5px;height:5px;margin:7px}
+@media(prefers-reduced-motion:reduce){button.is-loading::after{animation-duration:2.5s}}
 </style>
 </head>
 <body>
 <div class="app"><nav class="g" id="nav"></nav><main id="main"></main></div>
 <button id="menu" onclick="document.getElementById('nav').classList.toggle('open')">Menu</button>
 <div id="toast-stack" aria-live="polite" aria-atomic="false"></div>
+<div id="delete-busy" role="status" aria-label="Deleting" aria-live="polite"><span class="liquid-spinner"></span></div>
 <div id="app-dialog" role="presentation" onclick="if(event.target===this)closeDialog(false)"><div class="dialog-card" role="dialog" aria-modal="true" aria-labelledby="dialog-title"><h3 id="dialog-title"></h3><p id="dialog-message"></p><input id="dialog-input" style="display:none" autocomplete="off"><div class="dialog-actions"><button type="button" onclick="closeDialog(false)">Cancel</button><button type="button" class="p" id="dialog-accept" onclick="closeDialog(true)">Continue</button></div></div></div>
 <script>
 const K="f1liga25b",$=i=>document.getElementById(i),uid=()=>Math.random().toString(36).slice(2,8);
@@ -124,15 +151,19 @@ races:[{id:"a1",track:"Bahrain",date:"2026-11-21",time:"20:00",note:"Full race, 
 drivers:[{name:"Max",team:"Red Bull"},{name:"Lena",team:"Ferrari"},{name:"Tom",team:"Mercedes"},{name:"Jonas",team:"McLaren"},{name:"Sara",team:"Alfa Romeo"}],results:[],pen:[],polls:[]}],
 posts:[{id:"n1",c:"Announcement",t:"Welcome to the new season. Check the calendar and the rules before the first race.",d:Date.now()}],
 txt:{rules:"1. Races start at the announced time. Be in the lobby 15 minutes early.\n2. Points: 25-18-15-12-10-8-6-4-2-1.\n3. Assists and difficulty are set by the host.\n4. Disconnects: rejoin if possible, no restart.",conduct:"Race clean. Leave space, brake in time and give back positions after cutting a corner.\nNo deliberate collisions. Respect blue flags.",director:"The race director reviews incidents within 48 hours. Evidence: clip with timestamp.\nPenalties: time penalty, grid drop or penalty points."}}}
-const API_URL = "https://script.google.com/macros/s/AKfycbyD2U4M5FVeeK6ZkkkkDJ6zz-ms86-0iz4_5K_WfTrEWdhEFgXepFNNdcO-3ms-nwI/exec";
-let DB;
+const API_URL = "https://script.google.com/macros/s/AKfycbzanpQhK-Gj4GKxakaBvI9UtmMPt5pLCf5cLmzsl6pRN00yw9aX_0arocO8UH0WEks/exec";
 let AUTH=null;
-let saving=false,refreshBusy=false,lastServerSnapshot="",pendingRefreshData=null;
-let saveTimer=null,saveWaiters=[];
+let refreshBusy=false;
 const AUTH_KEY="f1liga25_auth_v1";
 const isAdmin=()=>AUTH?.role==="admin";
 const isLoggedIn=()=>!!AUTH?.token;
-async function api(action,payload={}){const response=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action,token:AUTH?.token||"",...payload})});const result=await response.json();if(!response.ok||!result.success)throw new Error(result.error||"Request failed");return result;}
+let busyCount=0,lastActionButton=null;const busyTargets=[];
+let deleteBusyCount=0;
+function beginDeleteBusy(){deleteBusyCount++;$("delete-busy")?.classList.add("show");}
+function endDeleteBusy(){deleteBusyCount=Math.max(0,deleteBusyCount-1);if(!deleteBusyCount)$("delete-busy")?.classList.remove("show");}
+document.addEventListener("click",e=>{const b=e.target.closest("button");if(b)lastActionButton=b;},true);
+function setBusy(on){if(on){busyCount++;const b=lastActionButton&&lastActionButton.isConnected?lastActionButton:null;busyTargets.push(b);if(b){b.classList.add("is-loading");b.setAttribute("aria-busy","true");}}else{busyCount=Math.max(0,busyCount-1);const b=busyTargets.pop();if(b&&b.isConnected&&!busyTargets.includes(b)){b.classList.remove("is-loading");b.removeAttribute("aria-busy");}}}
+async function api(action,payload={},showLoader=true){const quiet=!showLoader||action==="poll"||action==="setPrefs";if(!quiet)setBusy(true);try{const response=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action,token:AUTH?.token||"",...payload})});const result=await response.json();if(!response.ok||!result.success){const err=new Error(result.error||"Request failed");err.code=result.code||"";throw err;}return result;}finally{if(!quiet)setBusy(false);}}
 
 function notify(message,type="success"){
   const stack=$("toast-stack");if(!stack){console[type==="error"?"error":"log"](message);return;}
@@ -153,130 +184,172 @@ function closeDialog(ok){const root=$("app-dialog");if(!root.classList.contains(
 const askConfirm=(message,title="Are you sure?")=>openDialog({title,message,accept:"Confirm"}).then(Boolean);
 const askInput=(message,title="Enter a value",password=true)=>openDialog({title,message,input:true,password,accept:"Save"}).then(v=>v===false?null:v);
 
-const L = () =>
-  DB.leagues.find(l => l.id == DB.active) || DB.leagues[0];
-
-const S = {
-  get races(){return L().races},
-  set races(v){L().races=v},
-  get drivers(){return L().drivers},
-  set drivers(v){L().drivers=v},
-  get results(){return L().results},
-  set results(v){L().results=v},
-  get pen(){return L().pen},
-  set pen(v){L().pen=v},
-  get polls(){return L().polls},
-  set polls(v){L().polls=v},
-  get posts(){return DB.posts},
-  set posts(v){DB.posts=v},
-  get txt(){return DB.txt}
+/* ───────────── Stage 1 data layer ─────────────
+   STORE holds only what the visited pages needed. Every page declares the data it needs (PAGE_NEEDS);
+   a lightweight "poll" request (versions only) tells us what changed, and only those parts are re-downloaded.
+   The selected season is PER BROWSER TAB (sessionStorage) and is sent with each request; the server never has a
+   shared "active season". It is also stored as a personal preference to restore it after the next login. */
+const STORE={seasons:[],seasonId:"",data:{},posts:{items:[],next:null,category:"",loaded:false},texts:null,allTime:null,known:{},latest:{}};
+const PAGE_NEEDS={calendar:{parts:["races","results"]},voting:{parts:["races","drivers","polls"]},standings:{parts:["drivers","results"]},results:{parts:["races","drivers","results"]},penalties:{parts:["drivers","penalties"]},feed:{posts:true},rules:{texts:true},accounts:{},"s-drivers":{allTime:true},"s-teams":{allTime:true},"s-tracks":{allTime:true},"s-all":{allTime:true}};
+const needs=p=>({parts:[],posts:false,texts:false,allTime:false,...(PAGE_NEEDS[p]||{})});
+const SD=()=>STORE.data[STORE.seasonId]||{};
+const seasonMeta=()=>STORE.seasons.find(s=>s.id===STORE.seasonId)||STORE.seasons[0]||{id:"",name:"",done:false,rev:0};
+const L=()=>({...seasonMeta(),drivers:S.drivers,results:S.results});
+const S={
+  get races(){return SD().races||[]},
+  get drivers(){return SD().drivers||[]},
+  get results(){return SD().results||[]},
+  get pen(){return SD().penalties||[]},
+  get polls(){return SD().polls||[]},
+  get posts(){return STORE.posts.items},
+  get txt(){const o={};Object.keys(STORE.texts||{}).forEach(k=>o[k]=STORE.texts[k].value);return o}
 };
+const AL=()=>STORE.allTime||[];
+let inFlight=0,pendingRefresh=false,textBaseRev=0,resultBaseRev=0;
+const SEASON_KEY=()=>"f1liga25_season_"+(AUTH&&AUTH.username||"");
+function persistSeason(id){
+  try{sessionStorage.setItem(SEASON_KEY(),id)}catch(e){}
+  api("setPrefs",{prefs:{selectedSeasonId:id}},false).catch(()=>{});
+}
+const isStale=key=>(STORE.latest[key]||0)!==(STORE.known[key]||0);
+function applySeasons(list,version){
+  STORE.seasons=list;STORE.known.seasons=version||0;
+  if(!list.some(s=>s.id===STORE.seasonId)){STORE.seasonId=list[0]?list[0].id:"";if(STORE.seasonId)persistSeason(STORE.seasonId);}
+}
+function applyBoot(b){
+  STORE.seasons=b.seasons;STORE.latest=b.versions||{};STORE.known.seasons=STORE.latest.seasons||0;
+  let saved="";try{saved=sessionStorage.getItem(SEASON_KEY())||""}catch(e){}
+  const prefs=b.prefs||{};
+  const pick=[saved,prefs.selectedSeasonId,b.defaultSeasonId].find(id=>id&&b.seasons.some(s=>s.id===id));
+  STORE.seasonId=pick||(b.seasons[0]&&b.seasons[0].id)||"";
+  try{sessionStorage.setItem(SEASON_KEY(),STORE.seasonId)}catch(e){}
+  if(typeof prefs.feedFilter==="string"&&(prefs.feedFilter===""||CATS.includes(prefs.feedFilter)))fc=prefs.feedFilter;
+}
+function mergeSeason(sid,data,partVersions){
+  const d=STORE.data[sid]||(STORE.data[sid]={});
+  Object.keys(data).forEach(p=>{d[p]=data[p];STORE.known["s."+sid+"."+p]=partVersions[p]||0});
+}
+async function loadSeasonParts(sid,parts){const r=await api("loadSeason",{seasonId:sid,parts},false);mergeSeason(sid,r.data,r.partVersions);}
+async function loadFeed(reset){
+  const P=STORE.posts,r=await api("loadFeed",{category:fc,before:reset?null:P.next,limit:30},false);
+  P.items=reset?r.posts:P.items.concat(r.posts);P.next=r.next;P.loaded=true;P.category=fc;
+  if(reset)STORE.known.posts=r.version;
+}
+async function loadTexts(){const r=await api("loadTexts",{},false);STORE.texts=r.texts;STORE.known.texts=r.version;}
+async function loadAllTime(){const r=await api("loadAllTime",{},false);STORE.allTime=r.leagues;STORE.known.allTime=r.version;}
+function plan(page){
+  const n=needs(page),sid=STORE.seasonId,d=STORE.data[sid]||{};
+  return{
+    parts:n.parts.filter(p=>!d[p]||isStale("s."+sid+"."+p)),
+    posts:n.posts&&(!STORE.posts.loaded||isStale("posts")||STORE.posts.category!==fc),
+    texts:n.texts&&(!STORE.texts||isStale("texts")),
+    allTime:n.allTime&&(!STORE.allTime||isStale("allTime"))
+  };
+}
+const planEmpty=p=>!p.parts.length&&!p.posts&&!p.texts&&!p.allTime;
+async function loadPlan(page){
+  const p=plan(page),jobs=[];
+  if(p.parts.length)jobs.push(loadSeasonParts(STORE.seasonId,p.parts));
+  if(p.posts)jobs.push(loadFeed(true));
+  if(p.texts)jobs.push(loadTexts());
+  if(p.allTime)jobs.push(loadAllTime());
+  await Promise.all(jobs);
+  return jobs.length>0;
+}
+const busyUI=()=>hasActiveEditor()||!!document.querySelector(".dd.open");
+function hasActiveEditor(){
+  const a=document.activeElement;
+  return !!(a&&(a.tagName==="INPUT"||a.tagName==="TEXTAREA"||a.tagName==="SELECT"));
+}
+function loadingView(){return `<div class="g card" style="display:grid;place-items:center;min-height:160px"><span class="liquid-spinner" role="status" aria-label="Loading"></span></div>`}
+// Show a page: draw the shell instantly, download only what this page needs, then draw the page.
+async function show(){
+  if(!isLoggedIn()){renderLogin();return;}
+  const page=cur();
+  if(!planEmpty(plan(page))){
+    if(pg[page]&&!(page==="accounts"&&!isAdmin())){render(loadingView());}
+    try{await loadPlan(page);}catch(e){handleApiError(e);return;}
+  }
+  if(cur()===page)render();
+}
+function handleApiError(e){
+  if(/sign in again|session expired/i.test(e.message||"")){AUTH=null;try{localStorage.removeItem(AUTH_KEY)}catch(_){};renderLogin();}
+  else notify(e.message||"Request failed","error");
+}
+// One tiny request. Re-downloads only what changed for the page that is open.
+async function pollOnce(){
+  const r=await api("poll",{seasonsV:STORE.known.seasons},false);
+  STORE.latest=r.versions;
+  let changed=false;
+  if(r.seasons){applySeasons(r.seasons,r.versions.seasons);changed=true;}
+  if(!changed&&planEmpty(plan(cur())))return;
+  if(busyUI()){pendingRefresh=true;return;}
+  pendingRefresh=false;
+  await loadPlan(cur());
+  render();
+}
+function applyPendingRefresh(){
+  if(!pendingRefresh||busyUI()||inFlight||refreshBusy)return;
+  pendingRefresh=false;
+  refreshBusy=true;
+  loadPlan(cur()).then(()=>render()).catch(e=>console.warn("Refresh failed:",e)).finally(()=>{refreshBusy=false;});
+}
+function startAutoRefresh(){
+  if(window.__f1AutoRefreshStarted)return;window.__f1AutoRefreshStarted=true;
+  const tick=async()=>{
+    if(!isLoggedIn()||inFlight||refreshBusy||document.hidden)return;
+    refreshBusy=true;
+    try{await pollOnce();}
+    catch(e){if(/sign in again|session expired/i.test(e.message))handleApiError(e);else console.warn("Background refresh failed:",e);}
+    finally{refreshBusy=false;}
+  };
+  window.setInterval(tick,2000);
+  document.addEventListener("visibilitychange",()=>{if(!document.hidden)tick();});
+}
+addEventListener("focusout",()=>window.setTimeout(applyPendingRefresh,0));
+addEventListener("click",()=>window.setTimeout(applyPendingRefresh,0));
 
-function diffObjects(before, after, path=[], out=[]) {
-  if (JSON.stringify(before) === JSON.stringify(after)) return out;
-  if (Array.isArray(before) && Array.isArray(after) && before.length === after.length) {
-    for (let i=0;i<after.length;i++) diffObjects(before[i],after[i],[...path,i],out);
-  } else if (before && after && typeof before === "object" && typeof after === "object" && !Array.isArray(before) && !Array.isArray(after)) {
-    const keys = new Set([...Object.keys(before), ...Object.keys(after)]);
-    for (const key of keys) {
-      if (!(key in after)) out.push({path:[...path,key], remove:true});
-      else if (!(key in before)) out.push({path:[...path,key], value:after[key]});
-      else diffObjects(before[key], after[key], [...path,key], out);
+// Every shared-data change is ONE server operation. The server locks, checks revisions, writes, bumps versions
+// and returns the fresh parts of the page that is open, so there is no second round trip in the normal case.
+async function mutate(op){
+  inFlight++;
+  try{
+    const r=await api("mutate",{op,want:{seasonId:STORE.seasonId,parts:needs(cur()).parts}});
+    STORE.latest=r.versions;
+    if(r.seasons)applySeasons(r.seasons,r.versions.seasons);
+    if(r.loaded)mergeSeason(r.loaded.seasonId,r.loaded.data,r.loaded.partVersions);
+    await loadPlan(cur());
+    return r.result||{};
+  }catch(e){
+    if(e.code==="CONFLICT"||e.code==="NOT_FOUND"){
+      notify(e.code==="CONFLICT"?"Someone else changed this at the same time. The latest data has been loaded; please check and try again.":e.message,"error");
+      try{const p=await api("poll",{seasonsV:STORE.known.seasons},false);STORE.latest=p.versions;if(p.seasons)applySeasons(p.seasons,p.versions.seasons);await loadPlan(cur());render();}catch(_){}
+      e.handled=true;
     }
-  } else out.push({path, value:after});
-  return out;
+    throw e;
+  }finally{inFlight--;}
 }
-function flushAdminSave() {
-  clearTimeout(saveTimer); saveTimer=null;
-  const waiters=saveWaiters.splice(0);
-  if (!waiters.length) return;
-  if (!isAdmin()) { waiters.forEach(w=>w.reject(new Error("Permission denied"))); return; }
-  const snapshot=JSON.stringify(DB);
-  let changes;
-  try { changes=diffObjects(JSON.parse(lastServerSnapshot||"{}"), JSON.parse(snapshot)); }
-  catch(e) { waiters.forEach(w=>w.reject(e)); return; }
-  if (!changes.length) { saving=false; waiters.forEach(w=>w.resolve({success:true,unchanged:true})); return; }
-  saving=true;
-  api("patch",{changes}).then(r=>{
-    lastServerSnapshot=snapshot;
-    try{localStorage.setItem(K,snapshot)}catch(e){}
-    waiters.forEach(w=>w.resolve(r));
-  }).catch(e=>{
-    waiters.forEach(w=>w.reject(e));
-    notify("Save failed. Please try again.","error");
-  }).finally(()=>{saving=false;applyPendingRefresh();});
-}
-const save = () => {
-  if(!isAdmin()){notify("Only an administrator can make this change.","error");return Promise.reject(new Error("Permission denied"));}
-  try{localStorage.setItem(K,JSON.stringify(DB))}catch(e){}
-  const promise=new Promise((resolve,reject)=>saveWaiters.push({resolve,reject}));
-  saving=true;
-  clearTimeout(saveTimer);
-  saveTimer=setTimeout(flushAdminSave,100);
-  return promise;
-};
+const fail=e=>{if(!e.handled)notify(e.message||"Something went wrong.","error");};
 
 async function init(){
   try{
     const cached=localStorage.getItem(AUTH_KEY);
     if(cached){
       AUTH=JSON.parse(cached);
-      const r=await api("sync");
-      DB=r.data;lastServerSnapshot=JSON.stringify(DB);
-      normalizeDb();render();startAutoRefresh();return;
+      applyBoot(await api("bootstrap",{},false));
+      startAutoRefresh();await show();return;
     }
   }catch(e){console.warn("Saved login could not be restored:",e);}
   AUTH=null;try{localStorage.removeItem(AUTH_KEY)}catch(e){}
   renderLogin();
 }
-function normalizeDb(){
-  DB.leagues.forEach(l=>{if(!Array.isArray(l.polls))l.polls=[];if(Array.isArray(l.races))l.races.forEach(x=>{if(!x.status)x.status=x.date?"confirmed":"proposed";});});
-}
-function hasActiveEditor(){
-  const active=document.activeElement;
-  return !!(active && (active.tagName==="INPUT" || active.tagName==="TEXTAREA" || active.tagName==="SELECT"));
-}
-function applyServerSnapshot(data,snapshot){
-  DB=data;normalizeDb();lastServerSnapshot=snapshot;pendingRefreshData=null;
-  if(!pg[cur()])location.hash="#calendar";
-  else render();
-}
-function applyPendingRefresh(){
-  if(!pendingRefreshData || hasActiveEditor() || document.querySelector(".dd.open") || saving)return;
-  const pending=pendingRefreshData;
-  applyServerSnapshot(pending.data,pending.snapshot);
-}
-function startAutoRefresh(){
-  if(window.__f1AutoRefreshStarted)return;window.__f1AutoRefreshStarted=true;
-  window.setInterval(async()=>{
-    if(!isLoggedIn() || saving || refreshBusy || document.hidden)return;
-    refreshBusy=true;
-    try{
-      const r=await api("sync");
-      const snapshot=JSON.stringify(r.data);
-      if(snapshot!==lastServerSnapshot){
-        if(hasActiveEditor() || document.querySelector(".dd.open")){
-          pendingRefreshData={data:r.data,snapshot};
-        }else{
-          applyServerSnapshot(r.data,snapshot);
-        }
-      }
-    }catch(e){
-      if(/sign in again|session expired/i.test(e.message)){
-        AUTH=null;try{localStorage.removeItem(AUTH_KEY)}catch(_){};renderLogin();
-      }else console.warn("Background refresh failed:",e);
-    }finally{refreshBusy=false;}
-  },1000);
-}
-addEventListener("focusout",()=>window.setTimeout(applyPendingRefresh,0));
-addEventListener("click",()=>window.setTimeout(applyPendingRefresh,0));
 
 function renderLogin(){
   $("nav").innerHTML='<div class="brand"><div class="logo"></div>F1 25 League</div>';
   $("main").innerHTML=`<div class="g card" style="max-width:440px;margin:8vh auto"><h1 style="margin:0 0 6px">League login</h1><p class="mu">Sign in with your personal account.</p><div class="field" style="margin-top:18px"><label>Username</label><input id="login-user" autocomplete="username" placeholder="Username"></div><div class="field" style="margin-top:12px"><label>Password</label><input id="login-pass" type="password" autocomplete="current-password" placeholder="Password"></div><p id="login-error" class="mu" style="color:#d33"></p><button class="p" style="margin-top:12px" onclick="login()">Sign in</button></div>`;
 }
-async function login(){const username=$("login-user").value.trim(),password=$("login-pass").value;$("login-error").textContent="";try{const r=await api("login",{username,password});AUTH={token:r.token,username:r.user.username,role:r.user.role};try{localStorage.setItem(AUTH_KEY,JSON.stringify(AUTH));}catch(e){}DB=r.data;normalizeDb();lastServerSnapshot=JSON.stringify(DB);render();startAutoRefresh();}catch(e){$("login-error").textContent=e.message||"Login failed";}}
-async function logout(){const token=AUTH?.token;try{if(token)await api("logout");}catch(e){}AUTH=null;DB=null;try{localStorage.removeItem(AUTH_KEY)}catch(e){}renderLogin();}
+async function login(){const username=$("login-user").value.trim(),password=$("login-pass").value;$("login-error").textContent="";try{const r=await api("login",{username,password});AUTH={token:r.token,username:r.user.username,role:r.user.role};try{localStorage.setItem(AUTH_KEY,JSON.stringify(AUTH));}catch(e){}STORE.data={};STORE.known={};STORE.posts={items:[],next:null,category:"",loaded:false};STORE.texts=null;STORE.allTime=null;applyBoot(r.boot);startAutoRefresh();await show();}catch(e){$("login-error").textContent=e.message||"Login failed";}}
+async function logout(){const token=AUTH?.token;try{if(token)await api("logout");}catch(e){}AUTH=null;STORE.data={};STORE.known={};STORE.seasons=[];STORE.texts=null;STORE.allTime=null;STORE.posts={items:[],next:null,category:"",loaded:false};try{localStorage.removeItem(AUTH_KEY)}catch(e){}renderLogin();}
 
 let editing=false,fc="";
 const cur=()=>location.hash.slice(1)||"calendar";
@@ -308,8 +381,7 @@ pg.calendar=()=>{
   ${isAdmin()?`<div class="g card"><h3>Propose a race</h3><p class="mu">Add the track first. The date and time will be decided in Time Voting.</p><div class="form-grid"><div class="field"><label for="rt">Track</label><input id="rt" placeholder="e.g. Suzuka"></div><div class="field"><label for="rn">Format / note (optional)</label><input id="rn" placeholder="e.g. Sprint, 50% distance"></div></div><div style="margin-top:12px"><button class="p" onclick="addRace()">＋ Propose race</button></div></div>`:""}`;
 };
 pg.voting=()=>{
-  if(!Array.isArray(S.polls))S.polls=[];
-  const members=S.drivers||[];
+    const members=S.drivers||[];
   const polls=[...S.polls].reverse();
   const proposed=S.races.filter(r=>r.status==="proposed"||!r.date);
   const raceChoices=[["","Choose a proposed race"],...proposed.map(r=>[r.id,r.track])];
@@ -330,59 +402,53 @@ pg.voting=()=>{
   }).join("");
   return (isAdmin()?create:`<div class="g card"><h3>Time Voting</h3><p class="mu">Choose your preferred option in an open poll. You can change your vote at any time before it closes.</p></div>`)+(cards||'<div class="g card empty">No polls yet. Add a proposed race in Race Calendar, then create a poll here.</div>');
 };
-pg.standings=()=>{const l=L(),s=stats([l]);return`<div class="g card"><div class="row" style="justify-content:space-between"><div><h3 style="margin:0">${esc(l.name)}</h3><div class="mu">${l.done?"Season finished. The champion is part of the Hall of Fame.":"Season in progress."}</div></div>${isAdmin()?`<div class="row"><span class="mu">Season finished</span><label class="sw"><input type="checkbox" ${l.done?"checked":""} onchange="L().done=this.checked;save();render()"><i></i></label></div>`:""}</div></div>
+pg.standings=()=>{const l=L(),s=stats([l]);return`<div class="g card"><div class="row" style="justify-content:space-between"><div><h3 style="margin:0">${esc(l.name)}</h3><div class="mu">${l.done?"Season finished. The champion is part of the Hall of Fame.":"Season in progress."}</div></div>${isAdmin()?`<div class="row"><span class="mu">Season finished</span><label class="sw"><input type="checkbox" ${l.done?"checked":""} onchange="toggleSeasonDone(this.checked)"><i></i></label></div>`:""}</div></div>
 <div class="g card"><h3>Drivers</h3>${table(["#","Driver","Team",{t:"Wins",n:1},{t:"Podiums",n:1},{t:"Points",n:1}],s.d.map((d,i)=>`<tr><td class="pos">${i+1}</td><td><b>${esc(d.name)}</b>${l.done&&i==0&&d.pts?' <span class="tag ok">Champion</span>':""}</td><td class="mu">${esc(d.team)}</td><td class="n">${d.w}</td><td class="n">${d.p}</td><td class="n"><b>${d.pts}</b></td></tr>`))}</div>
 <div class="g card"><h3>Teams</h3>${table(["#","Team",{t:"Wins",n:1},{t:"Points",n:1}],s.t.map((d,i)=>`<tr><td class="pos">${i+1}</td><td><b>${esc(d.name)}</b></td><td class="n">${d.w}</td><td class="n"><b>${d.pts}</b></td></tr>`))}</div>
-<div class="g card"><h3>League members</h3><div class="row" style="margin-bottom:12px">${l.drivers.map((d,i)=>`<span class="tag">${esc(d.name)} / ${esc(d.team)} ${isAdmin()?`<a href="#standings" onclick="S.drivers.splice(${i},1);save();render();return false" style="color:inherit;margin-left:6px;text-decoration:none">x</a>`:""}</span>`).join("")}</div>${isAdmin()?`<div class="row"><input id="dn" placeholder="Driver name"><input id="dt" placeholder="Team"><button class="p" onclick="addDriver()">Add member</button></div>`:""}</div>
+<div class="g card"><h3>League members</h3><div class="row" style="margin-bottom:12px">${l.drivers.map((d,i)=>`<span class="tag">${esc(d.name)} / ${esc(d.team)} ${isAdmin()?`<a href="#standings" onclick="removeDriver(${i});return false" style="color:inherit;margin-left:6px;text-decoration:none">x</a>`:""}</span>`).join("")}</div>${isAdmin()?`<div class="row" style="align-items:end"><div class="field" style="max-width:260px"><label>Driver account</label><div id="member-account-select" class="mu">Loading registered accounts…</div></div><div class="field" style="max-width:220px"><label>Team</label><input id="dt" placeholder="Team"></div><button class="p" onclick="addDriver()">Add member</button></div>`:""}</div>
 ${isAdmin()?`<div class="g card"><h3>New league</h3><div class="row"><input id="ln" placeholder="League name, e.g. Season 2"><label class="row mu"><span class="sw"><input type="checkbox" id="lk" checked><i></i></span>Keep members</label><button class="p" onclick="addLeague()">Create</button></div><p class="helper">Delete seasons in Account Management.</p></div>`:""}`};
 
 pg.results=()=>{
   const races=S.races.filter(r=>r.status!=="proposed"&&r.date).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
   if(!races.some(r=>r.id===resultRaceId))resultRaceId=races[0]?.id||"";
   const existing=S.results.find(r=>r.raceId===resultRaceId);
-  if(!resultDraft.length)resultDraft=existing?[...existing.order]:[""];
+  if(!resultDraft.length){resultDraft=existing?[...existing.order]:[""];resultBaseRev=existing?existing.rev:0;}
   const rows=resultDraft.map((name,i)=>`<div class="result-row"><div class="step">P${i+1}</div><div class="field"><label>${i===0?'Race winner':i===1?'2nd place':i===2?'3rd place':`Position ${i+1}`}</label>${dd("result-driver-"+i,[["","Select driver"],...S.drivers.map(d=>[d.name,d.name])],name,v=>{resultDraft[i]=v})}</div><button class="x" onclick="removeResultDriver(${i})" ${resultDraft.length<=1?'disabled':''}>Remove</button></div>`).join("");
   const saved=[...S.results].reverse().map(r=>{const rc=raceOf(r.raceId);return `<div class="g card"><div class="row" style="justify-content:space-between"><div><h3 style="margin:0">${esc(rc?rc.track:"Race")}</h3><div class="mu">${rc?fmt(rc.date,{day:"numeric",month:"long",year:"numeric"}):"Race no longer in calendar"}</div></div>${isAdmin()?`<button class="x" onclick="editResult('${r.raceId}')">Edit result</button><button class="x" onclick="del('results','${r.id}')">Remove</button>`:""}</div>${table(["Position","Driver",{t:"Points",n:1}],r.order.map((n,i)=>`<tr><td class="pos">P${i+1}</td><td>${esc(n)}</td><td class="n"><b>${PTS[i]||0}</b></td></tr>`))}</div>`}).join("");
-  return `${isAdmin()?`<div class="g card"><div class="row" style="justify-content:space-between"><div><h3 style="margin:0">Enter race result</h3><p class="mu" style="margin:4px 0 0">Choose the race, then select each driver in finishing order. Points are added automatically.</p></div><span class="tag">${existing?'Editing saved result':'New result'}</span></div>${races.length?`<div class="field" style="margin-top:16px"><label>Race</label>${dd("result-race",[["","Choose a race"],...races.map(r=>[r.id,`${r.track} · ${fmt(r.date,{day:"numeric",month:"short",year:"numeric"})}`])],resultRaceId,v=>setResultRace(v))}</div><div style="margin-top:14px"><div class="row" style="justify-content:space-between"><b>Finishing order</b><span class="mu">P1 gets ${PTS[0]} pts · P10 gets ${PTS[9]} pt</span></div>${rows}<div class="row" style="margin-top:12px"><button type="button" onclick="addResultDriver()">＋ Add finishing position</button><button class="p" onclick="saveResult()" ${!resultRaceId?'disabled':''}>Save race result</button></div></div>`:'<p class="empty">Add a race in Race Calendar before entering results.</p>'}</div>`:`<div class="g card"><h3>Race Results</h3><p class="mu">Results are read-only for regular members.</p></div>`}${saved||'<div class="g card empty">No race results have been entered yet.</div>'}`;
+  return `${isAdmin()?`<div class="g card"><div class="row" style="justify-content:space-between"><div><h3 style="margin:0">Enter race result</h3><p class="mu" style="margin:4px 0 0">Choose the race, then select each driver in finishing order. Points are added automatically.</p></div><span class="tag">${existing?'Editing saved result':'New result'}</span></div>${races.length?`<div class="field" style="margin-top:16px"><label>Race</label>${dd("result-race",[["","Choose a race"],...races.map(r=>[r.id,`${r.track} · ${fmt(r.date,{day:"numeric",month:"short",year:"numeric"})}`])],resultRaceId,v=>setResultRace(v))}</div><div style="margin-top:14px"><div class="row" style="justify-content:space-between"><b>Finishing order</b><span class="mu">P1 gets ${PTS[0]} pts · P10 gets ${PTS[9]} pt</span></div>${rows}<div class="row" style="margin-top:12px"><button type="button" onclick="addResultDriver()">＋ Add finishing position</button><button class="p" onclick="saveResult()" ${!resultRaceId?'disabled':''}>Save race result</button></div></div>`:'<p class="empty">Add a race in Race Calendar before entering results.</p>'}</div>`:`<div class="g card"><h3>Race Results</h3><p class="mu">Results are read-only for regular members.</p></div>`}${saved||'<div class="g card empty-state">No race results have been entered yet.</div>'}`;
 };
 pg.penalties=()=>{const tot={};S.pen.forEach(p=>tot[p.driver]=(tot[p.driver]||0)+p.pts);return`<div class="g card"><h3>Totals</h3><div class="row">${Object.keys(tot).map(k=>`<span class="tag">${esc(k)}: <b>${tot[k]}</b></span>`).join("")||'<span class="mu">No penalty points.</span>'}</div></div>
 ${isAdmin()?`<div class="g card"><h3>Add penalty</h3><div class="row">${dd("pd",S.drivers.map(d=>[d.name,d.name]))}<input id="pp" type="number" min="1" value="1" style="width:84px"><input id="pr" placeholder="Reason / race" style="flex:1"><button class="p" onclick="addPen()">Add</button></div></div>`:""}
 <div class="g card"><h3>History</h3>${table(["Driver",{t:"Points",n:1},"Reason",""],[...S.pen].reverse().map(p=>`<tr><td><b>${esc(p.driver)}</b></td><td class="n">${p.pts}</td><td class="mu">${esc(p.reason)}</td><td>${isAdmin()?`<button class="x" onclick="del('pen','${p.id}')">Remove</button>`:""}</td></tr>`))}</div>`};
-pg.feed=()=>`<div class="g card"><div class="row" style="margin-bottom:12px">${dd("fk",(isAdmin()?CATS:CATS.filter(c=>c!=="Announcement")).map(c=>[c,c]))}</div><textarea id="fp" placeholder="Write a post"></textarea><div style="margin-top:12px"><button class="p" onclick="addPost()">Post</button></div></div>
-<div class="row" style="margin:0 4px 14px">${["",...CATS].map(c=>`<button class="${fc==c?"on":""}" onclick="fc='${c}';render()">${c||"All"}</button>`).join("")}</div>
-<div class="g card">${[...S.posts].filter(p=>!fc||p.c==fc).reverse().map(p=>`<div class="post"><span class="tag">${esc(p.c)}</span><div style="margin-top:8px">${esc(p.t)}</div><div class="mu" style="margin-top:6px">${new Date(p.d).toLocaleString("en-GB",{dateStyle:"medium",timeStyle:"short"})} ${isAdmin()?`<button class="x" onclick="del('posts','${p.id}')">Remove</button>`:""}</div></div>`).join("")||'<div class="empty">Nothing here yet.</div>'}</div>`;
+pg.feed=()=>`<div class="g card"><div class="row" style="margin-bottom:12px">${dd("fk",(isAdmin()?CATS:CATS.filter(c=>c!=="Announcement")).map(c=>[c,c]))}</div><textarea id="fp" placeholder="Write a post"></textarea><div style="margin-top:12px"><button id="feed-post-button" class="p post-submit" onclick="addPost()">Post</button></div></div>
+<div class="row" style="margin:0 4px 14px">${["",...CATS].map(c=>`<button class="${fc==c?"on":""}" onclick="setFeedFilter('${c}')">${c||"All"}</button>`).join("")}</div>
+<div class="g card">${S.posts.map(p=>`<div class="post"><span class="tag">${esc(p.c)}</span><div style="margin-top:8px">${esc(p.t)}</div><div class="mu" style="margin-top:6px">${new Date(p.d).toLocaleString("en-GB",{dateStyle:"medium",timeStyle:"short"})} ${isAdmin()?`<button class="x" onclick="del('posts','${p.id}')">Remove</button>`:""}</div></div>`).join("")||'<div class="empty">Nothing here yet.</div>'}${STORE.posts.next?'<div style="margin-top:12px"><button onclick="moreFeed()">Load older posts</button></div>':""}</div>`;
 
-const text=k=>()=>`<div class="g card">${isAdmin()&&editing?`<textarea id="te" style="min-height:300px">${esc(S.txt[k])}</textarea><div class="row" style="margin-top:12px"><button class="p" onclick="S.txt['${k}']=$('te').value;editing=false;save();render()">Save</button><button onclick="editing=false;render()">Cancel</button></div>`:`<div class="txt">${esc(S.txt[k])}</div><div style="margin-top:16px">${isAdmin()?`<button onclick="editing=true;render()">Edit</button>`:""}</div>`}</div>`;
-pg.rules=()=>[["rules","Rules"],["conduct","Driving Conduct"],["director","Race Director Guide"]].map(([k,t])=>`<div class="g card"><div class="row" style="justify-content:space-between;margin-bottom:8px"><h3 style="margin:0">${t}</h3>${isAdmin()&&editing==k?"":(isAdmin()?`<button onclick="editing='${k}';render()">Edit</button>`:"")}</div>${isAdmin()&&editing==k?`<textarea id="te" style="min-height:220px">${esc(S.txt[k])}</textarea><div class="row" style="margin-top:12px"><button class="p" onclick="S.txt['${k}']=$('te').value;editing='';save();render()">Save</button><button onclick="editing='';render()">Cancel</button></div>`:`<div class="txt">${esc(S.txt[k])}</div>`}</div>`).join("");
+pg.rules=()=>[["rules","Rules"],["conduct","Driving Conduct"],["director","Race Director Guide"]].map(([k,t])=>`<div class="g card"><div class="row" style="justify-content:space-between;margin-bottom:8px"><h3 style="margin:0">${t}</h3>${isAdmin()&&editing==k?"":(isAdmin()?`<button onclick="startEdit('${k}')">Edit</button>`:"")}</div>${isAdmin()&&editing==k?`<textarea id="te" style="min-height:220px">${esc(S.txt[k])}</textarea><div class="row" style="margin-top:12px"><button class="p" onclick="saveText('${k}')">Save</button><button onclick="editing='';render()">Cancel</button></div>`:`<div class="txt">${esc(S.txt[k])}</div>`}</div>`).join("");
 
-pg.accounts=()=>`<div class="g card"><h3>Account management</h3><p class="mu">Create individual logins and assign roles. Accounts are stored securely by Google Apps Script.</p><div class="form-grid"><div class="field"><label>Username</label><input id="newuser" placeholder="e.g. Lena"></div><div class="field"><label>Temporary password</label><input id="newpass" type="password" placeholder="At least 10 characters"></div><div class="field"><label>Role</label>${dd("newrole",[["user","Regular user"],["admin","Admin"]],"user")}</div></div><button class="p" style="margin-top:14px" onclick="createAccount()">Create account</button></div><div class="g card"><h3>Registered accounts</h3><div id="account-list" class="empty">Loading accounts…</div></div><div class="g card"><h3>Season management</h3><p class="mu">Deleting a season permanently removes its races, votes, results and penalties.</p>${dd("deleteseason",DB.leagues.map(l=>[l.id,l.name]))}<button class="x" onclick="deleteSeason()">Delete selected season</button></div>`;
+pg.accounts=()=>`<div class="g card"><h3>Account management</h3><p class="mu">Create individual logins and assign roles. Accounts are stored securely by Google Apps Script.</p><div class="form-grid"><div class="field"><label>Username</label><input id="newuser" placeholder="e.g. Lena"></div><div class="field"><label>Temporary password</label><input id="newpass" type="password" placeholder="At least 10 characters"></div><div class="field"><label>Role</label>${dd("newrole",[["user","Regular user"],["admin","Admin"]],"user")}</div></div><button class="p" style="margin-top:14px" onclick="createAccount()">Create account</button></div><div class="g card"><h3>Registered accounts</h3><div id="account-list" class="empty">Loading accounts…</div></div><div class="g card"><h3>Season management</h3><p class="mu">Deleting a season permanently removes its races, votes, results and penalties.</p>${dd("deleteseason",STORE.seasons.map(l=>[l.id,l.name]))}<button class="x" onclick="deleteSeason()">Delete selected season</button></div>`;
 async function changeMyPassword(){const password=await askInput("Enter your new password (at least 10 characters):","Change password",true);if(!password)return;try{await api("changePassword",{password});notify("Your password has been changed.");}catch(e){notify(e.message,"error");}}
 async function refreshAccounts(){try{const r=await api("listUsers");$("account-list").innerHTML=r.users.map(u=>`<div class="race"><div class="grow"><b>${esc(u.username)}</b><div class="mu">${u.role==="admin"?"Administrator":"Regular user"}</div></div><button class="x" onclick="resetAccountPassword('${esc(u.username)}')">Reset password</button>${u.username!=="Albert"?`<button class="x" onclick="removeAccount('${esc(u.username)}')">Delete</button>`:""}</div>`).join("")||"No accounts.";}catch(e){$("account-list").textContent=e.message;}}
 async function createAccount(){try{await api("createUser",{username:$("newuser").value.trim(),password:$("newpass").value,role:DDV.newrole||"user"});notify("Account created.");render();refreshAccounts();}catch(e){notify(e.message,"error");}}
-async function removeAccount(username){if(!await askConfirm(`Delete account ${username}?`,"Delete account"))return;try{await api("deleteUser",{username});refreshAccounts();}catch(e){notify(e.message,"error");}}
+async function removeAccount(username){if(!await askConfirm(`Delete account ${username}?`,"Delete account"))return;beginDeleteBusy();try{await api("deleteUser",{username},false);await refreshAccounts();}catch(e){notify(e.message,"error");}finally{endDeleteBusy();}}
 async function resetAccountPassword(username){const password=await askInput(`New temporary password for ${username} (at least 10 characters):`,`Reset password · ${username}`,true);if(!password)return;try{await api("resetPassword",{username,password});notify("Password updated.");}catch(e){notify(e.message,"error");}}
 async function deleteSeason(){
   const id=String(DDV.deleteseason||"");
-  const season=DB.leagues.find(l=>String(l.id)===id);
+  const season=STORE.seasons.find(l=>String(l.id)===id);
   if(!season){notify("Select a season first.","error");return;}
-  if(DB.leagues.length<2){notify("At least one season must remain.","error");return;}
+  if(STORE.seasons.length<2){notify("At least one season must remain.","error");return;}
   if(!await askConfirm(`Delete “${season.name}” and all its data?`,"Delete season"))return;
+  beginDeleteBusy();
   try{
-    const r=await api("deleteSeason",{seasonId:id});
-    if(!r.data||!Array.isArray(r.data.leagues)||r.data.leagues.some(l=>String(l.id)===id)){
-      throw new Error("The server did not confirm the deletion.");
-    }
-    DB=r.data;
-    normalizeDb();
-    lastServerSnapshot=JSON.stringify(DB);
-    try{localStorage.setItem(K,lastServerSnapshot)}catch(e){}
-    DDV.deleteseason=DB.leagues[0]?.id||"";
+    await mutate({type:"season.delete",id});
+    delete STORE.data[id];
+    DDV.deleteseason=STORE.seasons[0]?.id||"";
     render();
     notify("Season deleted.");
-  }catch(e){notify(e.message||"Could not delete season.","error");}
+  }catch(e){fail(e);}
+  finally{endDeleteBusy();}
 }
 
-const AL=()=>DB.leagues;
 pg["s-drivers"]=()=>`<div class="g card">${table(["#","Driver",{t:"Leagues",n:1},{t:"Titles",n:1},{t:"Races",n:1},{t:"Wins",n:1},{t:"Podiums",n:1},{t:"Points",n:1}],stats(AL()).d.map((d,i)=>`<tr><td class="pos">${i+1}</td><td><b>${esc(d.name)}</b></td><td class="n">${AL().filter(l=>l.drivers.some(x=>x.name.toLowerCase()==d.name.toLowerCase())).length}</td><td class="n">${d.ti}</td><td class="n">${d.r}</td><td class="n">${d.w}</td><td class="n">${d.p}</td><td class="n"><b>${d.pts}</b></td></tr>`))}</div>`;
 pg["s-teams"]=()=>`<div class="g card">${table(["#","Team",{t:"Wins",n:1},{t:"Podiums",n:1},{t:"Points",n:1}],stats(AL()).t.map((d,i)=>`<tr><td class="pos">${i+1}</td><td><b>${esc(d.name)}</b></td><td class="n">${d.w}</td><td class="n">${d.p}</td><td class="n"><b>${d.pts}</b></td></tr>`))}</div>`;
 pg["s-tracks"]=()=>{const rows=[];AL().forEach(l=>l.results.forEach(r=>{const c=l.races.find(x=>x.id==r.raceId);rows.push(`<tr><td><b>${esc(c?c.track:"-")}</b></td><td class="mu">${esc(l.name)}</td><td>${esc(r.order[0]||"")}</td><td class="mu">${esc(r.order[1]||"")}</td></tr>`)}));return`<div class="g card">${table(["Track","League","Winner","Runner-up"],rows)}${rows.length?"":'<div class="empty">No results yet.</div>'}</div>`};
@@ -392,36 +458,49 @@ return`<div class="grid">${t("Leagues",AL().length)}${t("Races held",AL().reduce
 const DDV={},DDO={},DDF={};
 function dd(id,opts,def,fn){const v=DDV[id]!=null&&opts.some(o=>o[0]==DDV[id])?DDV[id]:(def!=null?def:(opts[0]?opts[0][0]:""));DDV[id]=v;DDO[id]=opts;DDF[id]=fn;const c=opts.find(o=>o[0]==v);
 return`<div class="dd" id="${id}"><button type="button" class="ddb" onclick="ddt(event,'${id}')">${esc(c?c[1]:"Select")}</button><div class="ddm">${opts.map((o,i)=>`<div class="${o[0]==v?"sel":""}" onclick="dds('${id}',${i})">${esc(o[1])}</div>`).join("")}</div></div>`}
-function ddt(e,id){e.stopPropagation();const el=$(id),o=el.classList.contains("open");document.querySelectorAll(".dd.open").forEach(d=>d.classList.remove("open"));if(!o)el.classList.add("open")}
-function dds(id,i){const o=DDO[id][i],el=$(id);DDV[id]=o[0];el.querySelector(".ddb").textContent=o[1];el.querySelectorAll(".ddm div").forEach((d,j)=>d.className=j==i?"sel":"");el.classList.remove("open");if(DDF[id])DDF[id](o[0])}
+function closeDropdown(el){if(!el)return;const menu=el.querySelector(".ddm")||document.querySelector(`.ddm[data-portal-for="${el.id}"]`);if(menu?.classList.contains("portal-open")){menu.classList.remove("portal-open");menu.removeAttribute("data-portal-for");el.appendChild(menu);menu.style.cssText=""}el.classList.remove("open")}
+function ddt(e,id){e.stopPropagation();const pageX=window.scrollX,pageY=window.scrollY,navScroll=$("nav")?.scrollTop||0;const el=$(id),o=el.classList.contains("open");document.querySelectorAll(".dd.open").forEach(d=>closeDropdown(d));if(!o){el.classList.add("open");const menu=el.querySelector(".ddm"),r=el.getBoundingClientRect();menu.dataset.portalFor=id;menu.classList.add("portal-open");document.body.appendChild(menu);const maxH=Math.min(240,window.innerHeight*.45);const below=window.innerHeight-r.bottom;const top=below>=Math.min(maxH,menu.scrollHeight+8)?r.bottom+6:Math.max(8,r.top-Math.min(maxH,menu.scrollHeight)-6);menu.style.left=Math.max(8,Math.min(r.left,window.innerWidth-r.width-8))+"px";menu.style.top=top+"px";menu.style.width=r.width+"px";menu.style.maxHeight=maxH+"px";}requestAnimationFrame(()=>{window.scrollTo(pageX,pageY);const n=$("nav");if(n)n.scrollTop=navScroll;});}
+function dds(id,i){const o=DDO[id][i],el=$(id),menu=document.querySelector(`.ddm[data-portal-for="${id}"]`)||el.querySelector(".ddm");DDV[id]=o[0];el.querySelector(".ddb").textContent=o[1];menu.querySelectorAll("div").forEach((d,j)=>d.className=j==i?"sel":"");closeDropdown(el);if(DDF[id])DDF[id](o[0])}
+document.addEventListener("click",e=>{document.querySelectorAll(".dd.open").forEach(d=>{if(!d.contains(e.target)&&!document.querySelector(`.ddm[data-portal-for="${d.id}"]`)?.contains(e.target))closeDropdown(d)})});
 addEventListener("click",()=>document.querySelectorAll(".dd.open").forEach(d=>d.classList.remove("open")));
-async function del(k,id){const labels={races:"race",results:"race result",pen:"penalty entry",posts:"Feed post"};const label=labels[k]||"item";if(!await askConfirm(`Delete this ${label}? This cannot be undone.`,"Confirm deletion"))return;S[k]=S[k].filter(x=>x.id!=id);if(k==="races")S.results=S.results.filter(r=>r.raceId!=id);try{await save();render();notify(`${label[0].toUpperCase()+label.slice(1)} deleted.`)}catch(e){notify(e.message||"Could not delete item.","error")}}
-function addRace(){const t=$("rt").value.trim();if(!t){notify("Enter a track name first.");return}S.races.push({id:uid(),track:t,date:"",time:"",note:$("rn").value.trim(),status:"proposed"});save();render()}
-function addDriver(){const n=$("dn").value.trim();if(!n)return;S.drivers.push({name:n,team:$("dt").value.trim()||"Independent"});save();render()}
-function addLeague(){const n=$("ln").value.trim();if(!n)return;const id=uid();DB.leagues.push({id,name:n,done:false,races:[],results:[],pen:[],polls:[],drivers:$("lk").checked?JSON.parse(JSON.stringify(L().drivers)):[]});DB.active=id;save();render()}
-function setResultRace(id){resultRaceId=id;const old=S.results.find(r=>r.raceId===id);resultDraft=old?[...old.order]:[""];render()}
-function editResult(id){resultRaceId=id;const old=S.results.find(r=>r.raceId===id);resultDraft=old?[...old.order]:[""];render()}
+async function del(k,id){const labels={races:"race",results:"race result",pen:"penalty entry",posts:"Feed post"};const ops={races:"race.remove",results:"result.remove",pen:"penalty.remove",posts:"post.remove"};const label=labels[k]||"item";if(!await askConfirm(`Delete this ${label}? This cannot be undone.`,"Confirm deletion"))return;beginDeleteBusy();try{await mutate({type:ops[k],seasonId:STORE.seasonId,id});render();notify(`${label[0].toUpperCase()+label.slice(1)} deleted.`)}catch(e){fail(e)}finally{endDeleteBusy();}}
+async function addRace(){const t=$("rt").value.trim();if(!t){notify("Enter a track name first.");return}try{await mutate({type:"race.add",seasonId:STORE.seasonId,track:t,note:$("rn").value.trim()});render()}catch(e){fail(e)}}
+async function refreshDriverAccounts(){const host=$("member-account-select");if(!host)return;try{const r=await api("listUsers");const names=(r.users||[]).map(u=>u.username).filter(Boolean);const available=names.filter(n=>!S.drivers.some(d=>d.name.toLowerCase()===n.toLowerCase()));host.innerHTML=available.length?dd("memberaccount",[["","Choose an account"],...available.map(n=>[n,n])]):'<span class="mu">All registered accounts are already league members.</span>';}catch(e){host.textContent="Could not load accounts: "+e.message;}}
+async function addDriver(){const n=DDV.memberaccount||"";if(!n){notify("Choose an existing account first.","error");return;}if(S.drivers.some(d=>d.name.toLowerCase()===n.toLowerCase())){notify("That account is already a league member.","error");return;}try{await mutate({type:"driver.add",seasonId:STORE.seasonId,name:n,team:$("dt").value.trim()||"Independent"});notify("League member added.");render();}catch(e){fail(e)}}
+async function removeDriver(i){const d=S.drivers[i];if(!d)return;try{await mutate({type:"driver.remove",seasonId:STORE.seasonId,name:d.name});render()}catch(e){fail(e)}}
+async function toggleSeasonDone(done){try{await mutate({type:"season.update",id:STORE.seasonId,done:!!done});render()}catch(e){fail(e);render()}}
+async function addLeague(){const n=$("ln").value.trim();if(!n)return;try{const r=await mutate({type:"season.create",name:n,copyDriversFrom:$("lk").checked?STORE.seasonId:""});STORE.seasonId=r.id;persistSeason(r.id);await show()}catch(e){fail(e)}}
+function setResultRace(id){resultRaceId=id;const old=S.results.find(r=>r.raceId===id);resultDraft=old?[...old.order]:[""];resultBaseRev=old?old.rev:0;render()}
+function editResult(id){resultRaceId=id;const old=S.results.find(r=>r.raceId===id);resultDraft=old?[...old.order]:[""];resultBaseRev=old?old.rev:0;render()}
 function addResultDriver(){resultDraft.push("");render()}
 function removeResultDriver(i){if(resultDraft.length<=1)return;resultDraft.splice(i,1);render()}
-function saveResult(){const order=resultDraft.map(x=>String(x||"").trim()).filter(Boolean);if(!resultRaceId||!order.length){notify("Choose a race and at least one finishing driver.");return}if(new Set(order).size!==order.length){notify("Each driver can only appear once in the finishing order.");return}S.results=S.results.filter(r=>r.raceId!==resultRaceId);S.results.push({id:uid(),raceId:resultRaceId,order});resultDraft=[];save();render()}
-function addPen(){if(!DDV.pd)return;S.pen.push({id:uid(),driver:DDV.pd,pts:+$("pp").value||1,reason:$("pr").value.trim()});save();render()}
-async function addPost(){const t=$("fp").value.trim(),category=DDV.fk;if(!t)return;if(category==="Announcement"&&!isAdmin()){notify("Only admins can publish announcements.");return;}try{if(isAdmin()){S.posts.push({id:uid(),c:category,t,d:Date.now()});await save();}else{const r=await api("post",{category,text:t});DB.posts=r.posts;}render();}catch(e){notify(e.message,"error");}}
+async function saveResult(){const order=resultDraft.map(x=>String(x||"").trim()).filter(Boolean);if(!resultRaceId||!order.length){notify("Choose a race and at least one finishing driver.");return}if(new Set(order).size!==order.length){notify("Each driver can only appear once in the finishing order.");return}try{await mutate({type:"result.set",seasonId:STORE.seasonId,raceId:resultRaceId,order,baseRev:resultBaseRev});resultDraft=[];render()}catch(e){if(e.handled)resultDraft=[];fail(e)}}
+async function addPen(){if(!DDV.pd)return;try{await mutate({type:"penalty.add",seasonId:STORE.seasonId,driver:DDV.pd,pts:parseInt($("pp").value,10)||1,reason:$("pr").value.trim()});render()}catch(e){fail(e)}}
+let postBusy=false,postCooldownUntil=0,postCooldownTimer=null;
+function updatePostButton(){const b=$("feed-post-button");if(!b)return;const left=Math.max(0,Math.ceil((postCooldownUntil-Date.now())/1000));b.disabled=postBusy||left>0;b.textContent=postBusy?"Posting…":left>0?`Wait ${left}s`:"Post";if(left>0){clearTimeout(postCooldownTimer);postCooldownTimer=setTimeout(updatePostButton,250);}}
+async function addPost(){if(postBusy||Date.now()<postCooldownUntil){updatePostButton();return;}const field=$("fp"),t=field.value.trim(),category=DDV.fk;if(!t){notify("Write a post first.","error");return;}if(category==="Announcement"&&!isAdmin()){notify("Only admins can publish announcements.");return;}postBusy=true;updatePostButton();try{await mutate({type:"post.add",category,text:t});postCooldownUntil=Date.now()+5000;notify("Post published.");render();updatePostButton();}catch(e){postBusy=false;updatePostButton();notify(e.message||"Could not publish post.","error");return;}postBusy=false;updatePostButton();}
 function addPollSlot(){pollSlots.push({date:"",time:"20:00"});render()}
 function removePollSlot(i){if(pollSlots.length<=2)return;pollSlots.splice(i,1);render()}
-function createPoll(){const title=$("polltitle").value.trim(),raceId=DDV.pollrace||"";const slots=pollSlots.map((x,i)=>({date:$("poll-date-"+i)?.value||x.date,time:$("poll-time-"+i)?.value||x.time})).filter(x=>x.date&&x.time);if(!title||!raceId||slots.length<2){notify("Choose a proposed race, add a poll title and at least two complete date/time options.");return}const options=slots.map(x=>({id:uid(),date:x.date,time:x.time,label:new Date(x.date+"T"+x.time).toLocaleString("en-GB",{weekday:"short",day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"})}));S.polls.push({id:uid(),title,raceId,options,votes:[],closed:false,created:Date.now()});pollSlots=[{date:"",time:"20:00"},{date:"",time:"21:00"}];DDV.pollrace="";save();render()}
-async function castVote(id){const poll=S.polls.find(p=>p.id===id);if(!poll||poll.closed)return;const optionId=DDV["pollchoice-"+id];if(!optionId){notify("Select a time slot first.");return}try{const r=await api("vote",{pollId:id,optionId});const target=S.polls.find(p=>p.id===id);target.votes=r.votes;render();}catch(e){notify(e.message,"error");}}
-async function closePoll(id){const poll=S.polls.find(p=>p.id===id);if(!poll)return;const race=S.races.find(r=>r.id===poll.raceId);if(race){const optionId=DDV["pollwinner-"+id];const option=poll.options.find(o=>o.id===optionId);if(!option){notify("Choose the date and time to schedule.");return}if(!poll.votes.length){if(!await askConfirm("Nobody has voted yet. Close and schedule the selected option anyway?","No votes yet"))return}race.date=option.date;race.time=option.time;race.status="confirmed";poll.scheduledOption=option.id;}poll.closed=true;save();render()}
-function reopenPoll(id){const poll=S.polls.find(p=>p.id===id);if(!poll)return;poll.closed=false;const race=S.races.find(r=>r.id===poll.raceId);if(race&&poll.scheduledOption){race.status="proposed";race.date="";race.time="";delete poll.scheduledOption}save();render()}
-async function deletePoll(id){if(!await askConfirm("Delete this poll and all its votes?","Delete poll"))return;S.polls=S.polls.filter(p=>p.id!==id);save();render()}
-function render(){if(!isLoggedIn()){renderLogin();return;}const c=pg[cur()]?cur():"calendar";if(c==="accounts"&&!isAdmin()){location.hash="#calendar";return;}
-$("nav").innerHTML=`<div class="brand"><div class="logo"></div>F1 25 League</div><div class="mu" style="padding:0 12px 10px">${esc(AUTH.username)} · ${isAdmin()?"Admin":"Member"}</div>${(DDV.lg=L().id,dd("lg",DB.leagues.map(l=>[l.id,l.name]),null,v=>switchSeason(v)))}`+NAV.map(g=>{if(g[0]==="Administration"&&!isAdmin())return"";return `<div class="grp">${g[0]}</div>`+g[1].map(p=>`<a href="#${p[0]}" class="${p[0]==c?"on":""}">${p[1]}</a>`).join("")}).join("")+`<button style="margin:14px 10px" onclick="changeMyPassword()">Change password</button><button style="margin:0 10px 14px" onclick="logout()">Log out</button>`;
+async function createPoll(){const title=$("polltitle").value.trim(),raceId=DDV.pollrace||"";const slots=pollSlots.map((x,i)=>({date:$("poll-date-"+i)?.value||x.date,time:$("poll-time-"+i)?.value||x.time})).filter(x=>x.date&&x.time);if(!title||!raceId||slots.length<2){notify("Choose a proposed race, add a poll title and at least two complete date/time options.");return}const options=slots.map(x=>({date:x.date,time:x.time,label:new Date(x.date+"T"+x.time).toLocaleString("en-GB",{weekday:"short",day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"})}));try{await mutate({type:"poll.create",seasonId:STORE.seasonId,raceId,title,options});pollSlots=[{date:"",time:"20:00"},{date:"",time:"21:00"}];DDV.pollrace="";render()}catch(e){fail(e)}}
+async function castVote(id){const poll=S.polls.find(p=>p.id===id);if(!poll||poll.closed)return;const optionId=DDV["pollchoice-"+id];if(!optionId){notify("Select a time slot first.");return}try{await mutate({type:"vote",seasonId:STORE.seasonId,pollId:id,optionId});render();}catch(e){fail(e)}}
+async function closePoll(id){const poll=S.polls.find(p=>p.id===id);if(!poll)return;const race=S.races.find(r=>r.id===poll.raceId);let optionId="";if(race){optionId=DDV["pollwinner-"+id]||"";const option=poll.options.find(o=>o.id===optionId);if(!option){notify("Choose the date and time to schedule.");return}if(!poll.votes.length){if(!await askConfirm("Nobody has voted yet. Close and schedule the selected option anyway?","No votes yet"))return}}try{await mutate({type:"poll.close",seasonId:STORE.seasonId,pollId:id,optionId,baseRev:poll.rev});render()}catch(e){fail(e)}}
+async function reopenPoll(id){const poll=S.polls.find(p=>p.id===id);if(!poll)return;try{await mutate({type:"poll.reopen",seasonId:STORE.seasonId,pollId:id,baseRev:poll.rev});render()}catch(e){fail(e)}}
+async function deletePoll(id){if(!await askConfirm("Delete this poll and all its votes?","Delete poll"))return;beginDeleteBusy();try{await mutate({type:"poll.delete",seasonId:STORE.seasonId,pollId:id});render();notify("Poll deleted.");}catch(e){fail(e)}finally{endDeleteBusy();}}
+function startEdit(k){editing=k;textBaseRev=(STORE.texts&&STORE.texts[k]&&STORE.texts[k].rev)||0;render()}
+async function saveText(k){try{await mutate({type:"text.set",key:k,value:$("te").value,baseRev:textBaseRev});editing="";render()}catch(e){if(e.handled)editing="";fail(e)}}
+async function setFeedFilter(c){fc=c;api("setPrefs",{prefs:{feedFilter:c}},false).catch(()=>{});try{await loadFeed(true);render()}catch(e){fail(e)}}
+async function moreFeed(){try{await loadFeed(false);render()}catch(e){fail(e)}}
+function initNavScrollbar(){const nav=$("nav");if(!nav)return;nav.querySelector("#nav-scroll-track")?.remove();const track=document.createElement("div");track.id="nav-scroll-track";const thumb=document.createElement("div");thumb.id="nav-scroll-thumb";track.appendChild(thumb);nav.appendChild(track);const update=()=>{const max=nav.scrollHeight-nav.clientHeight,trackH=track.clientHeight;if(max<=0){track.style.display="none";return}track.style.display="block";const h=Math.max(42,Math.min(trackH*.46,trackH*nav.clientHeight/nav.scrollHeight));thumb.style.height=h+"px";thumb.style.top=((trackH-h)*(nav.scrollTop/max))+"px"};nav.addEventListener("scroll",update,{passive:true});let dragY=0,startTop=0;thumb.addEventListener("pointerdown",e=>{e.preventDefault();dragY=e.clientY;startTop=parseFloat(thumb.style.top)||0;thumb.setPointerCapture(e.pointerId)});thumb.addEventListener("pointermove",e=>{if(!thumb.hasPointerCapture(e.pointerId))return;const trackH=track.clientHeight,h=thumb.offsetHeight,max=nav.scrollHeight-nav.clientHeight,travel=trackH-h;nav.scrollTop=Math.max(0,Math.min(max,startTop+(e.clientY-dragY)*max/travel))});thumb.addEventListener("pointerup",e=>{if(thumb.hasPointerCapture(e.pointerId))thumb.releasePointerCapture(e.pointerId)});track.addEventListener("pointerdown",e=>{if(e.target===thumb)return;const r=track.getBoundingClientRect(),h=thumb.offsetHeight,max=nav.scrollHeight-nav.clientHeight;nav.scrollTop=Math.max(0,Math.min(max,((e.clientY-r.top-h/2)/(r.height-h))*max))});update();if(window.ResizeObserver){new ResizeObserver(update).observe(nav)}}
+function render(override){if(!isLoggedIn()){renderLogin();return;}const c=pg[cur()]?cur():"calendar";if(c==="accounts"&&!isAdmin()){location.hash="#calendar";return;}
+$("nav").innerHTML=`<div class="brand"><div class="logo"></div>F1 25 League</div><div class="mu" style="padding:0 12px 10px">${esc(AUTH.username)} · ${isAdmin()?"Admin":"Member"}</div>${(DDV.lg=STORE.seasonId,dd("lg",STORE.seasons.map(l=>[l.id,l.name]),null,v=>switchSeason(v)))}`+NAV.map(g=>{if(g[0]==="Administration"&&!isAdmin())return"";return `<div class="grp">${g[0]}</div>`+g[1].map(p=>`<a href="#${p[0]}" class="${p[0]==c?"on":""}">${p[1]}</a>`).join("")}).join("")+`<button style="margin:14px 10px" onclick="changeMyPassword()">Change password</button><button style="margin:0 10px 14px" onclick="logout()">Log out</button>`;
+initNavScrollbar();
 const subs={calendar:"Plan race nights and see what is next.",voting:"Vote on the date and time that works best for your next race.",standings:"Standings, members and seasons of your league.",results:"Race finishing orders and points.",penalties:"Track penalty points per driver.",rules:"Rules, driving conduct and the race director guide in one place.",feed:"Announcements, event texts, race reviews and messages in one place.",accounts:"Manage league accounts, roles and seasons."};
-$("main").innerHTML=`<h1>${TITLES[c]||"Account Management"}</h1><p class="sub">${subs[c]||"F1 25 league administration."}</p>`+pg[c]();$("nav").classList.remove("open");if(c==="accounts")refreshAccounts();}
-async function switchSeason(id){try{await api("switchSeason",{seasonId:id});DB.active=id;render();}catch(e){notify(e.message,"error");}}
+$("main").innerHTML=`<h1>${TITLES[c]||"Account Management"}</h1><p class="sub">${subs[c]||"F1 25 league administration."}</p>`+(override||pg[c]());$("nav").classList.remove("open");if(c==="accounts")refreshAccounts();if(c==="standings"&&isAdmin())refreshDriverAccounts();}
+async function switchSeason(id){const picker=$("lg"),pageX=window.scrollX,pageY=window.scrollY,navScroll=$("nav")?.scrollTop||0,previous=STORE.seasonId;try{if(id===previous)return;picker?.classList.add("loading");picker?.querySelector(".ddb")?.setAttribute("aria-busy","true");STORE.seasonId=id;persistSeason(id);await loadPlan(cur());document.activeElement?.blur?.();render();requestAnimationFrame(()=>{window.scrollTo(pageX,pageY);const n=$("nav");if(n)n.scrollTop=navScroll;});}catch(e){STORE.seasonId=previous;persistSeason(previous);notify(e.message,"error");render();}}
 
 addEventListener("hashchange",()=>{
   editing=false;
-  render();
+  show();
   scrollTo(0,0);
 });
 
